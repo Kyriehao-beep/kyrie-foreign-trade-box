@@ -1,0 +1,119 @@
+.pdf-export-surface {
+  position: fixed;
+  left: -100000px;
+  top: 0;
+  width: 210mm;
+  pointer-events: none;
+  background: #fff;
+}
+
+.pdf-page {
+  position: relative;
+  box-sizing: border-box;
+  width: 210mm;
+  height: 297mm;
+  padding: 12mm;
+  overflow: hidden;
+  color: #21322f;
+  background: #fff;
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  font-size: 9pt;
+}
+
+.pdf-page + .pdf-page { margin-top: 8mm; }
+.pdf-page * { box-sizing: border-box; }
+.pdf-page h1, .pdf-page h2, .pdf-page p, .pdf-page dl, .pdf-page dd { margin: 0; }
+.pdf-page--capture .pdf-page__pagination { display: none; }
+.pdf-page--capture-overflow { height: auto; min-height: 297mm; overflow: visible; }
+.pdf-page--capture-overflow .pdf-page__pagination { position: static; margin-top: 7mm; text-align: right; }
+
+.pdf-page__brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 15mm;
+  padding: 0 7mm;
+  color: #fff;
+  background: #124e41;
+}
+
+.pdf-page__brand span { font-size: 17pt; font-weight: 700; }
+.pdf-page__brand small { font-size: 7.5pt; opacity: .82; }
+
+.pdf-page__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 23mm;
+  padding: 5mm 1mm 4mm;
+  border-bottom: 1.5pt solid #176b57;
+}
+
+.pdf-page__heading h1 { color: #124e41; font-size: 18pt; letter-spacing: .02em; }
+.pdf-page__heading p { margin-top: 1mm; color: #63736d; font-size: 8pt; }
+.pdf-page__heading dl { min-width: 58mm; }
+.pdf-page__heading dl > div { display: grid; grid-template-columns: 25mm 1fr; gap: 3mm; line-height: 1.7; }
+.pdf-page__heading dt { color: #63736d; font-weight: 700; }
+.pdf-page__heading dd { text-align: right; font-weight: 700; }
+
+.pdf-page__parties {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4mm;
+  margin-top: 5mm;
+}
+
+.pdf-page__party-card { min-height: 42mm; border: .7pt solid #9aada6; }
+.pdf-page__party-card h2 { padding: 2.5mm 3mm; color: #124e41; background: #e8f1ee; font-size: 9.5pt; }
+.pdf-page__party-card strong { display: block; padding: 3mm 3mm 1.5mm; font-size: 10pt; }
+.pdf-page__party-card p { padding: .7mm 3mm; color: #455650; line-height: 1.35; }
+
+.pdf-page__table { width: 100%; margin-top: 5mm; border-collapse: collapse; table-layout: fixed; }
+.pdf-page__table th { padding: 2.4mm 1.2mm; color: #fff; background: #176b57; font-size: 7.5pt; line-height: 1.25; }
+.pdf-page__table td { height: 9mm; padding: 1.8mm 1.2mm; border: .65pt solid #9aada6; line-height: 1.3; overflow-wrap: anywhere; vertical-align: middle; }
+.pdf-page__table td.is-center { overflow-wrap: normal; word-break: keep-all; }
+.pdf-page__table-row { break-inside: avoid; }
+.pdf-page .is-left { text-align: left; }
+.pdf-page .is-center { text-align: center; }
+.pdf-page .is-right { text-align: right; }
+
+.pdf-page__summary {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10mm;
+  min-height: 12mm;
+  padding: 2.5mm 4mm;
+  color: #124e41;
+  background: #e8f1ee;
+  border: .7pt solid #9aada6;
+  break-inside: avoid;
+}
+
+.pdf-page__summary span { font-weight: 700; }
+.pdf-page__summary strong { font-size: 13pt; }
+.pdf-page__summary--packing { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2mm; }
+.pdf-page__summary--packing div { display: grid; gap: 1mm; text-align: right; }
+.pdf-page__summary--packing strong { font-size: 8.5pt; }
+
+.pdf-page__terms { margin-top: 5mm; border: .7pt solid #9aada6; break-inside: avoid; }
+.pdf-page__terms h2 { padding: 2.5mm 3mm; color: #124e41; background: #e8f1ee; font-size: 9.5pt; }
+.pdf-page__terms dl > div { display: grid; grid-template-columns: 42mm 1fr; border-top: .55pt solid #c4d0cc; }
+.pdf-page__terms dt, .pdf-page__terms dd { min-height: 7mm; padding: 1.7mm 3mm; }
+.pdf-page__terms dt { color: #63736d; font-weight: 700; }
+.pdf-page__signatures { break-inside: avoid; }
+.pdf-page__signature-boxes { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; margin-top: 4mm; }
+.pdf-page__signature-boxes div { height: 24mm; padding: 3mm; border: .7pt solid #9aada6; color: #63736d; font-weight: 700; }
+
+.pdf-page__pagination { position: absolute; right: 12mm; bottom: 7mm; color: #63736d; font-size: 7.5pt; }
+
+.pdf-page--classic { color: #202524; }
+.pdf-page--classic .pdf-page__brand, .pdf-page--classic .pdf-page__table th { background: #27312f; }
+.pdf-page--classic .pdf-page__heading { border-color: #27312f; }
+.pdf-page--classic .pdf-page__heading h1, .pdf-page--classic .pdf-page__party-card h2,
+.pdf-page--classic .pdf-page__terms h2 { color: #202524; }
+
+.pdf-page--minimal .pdf-page__brand { min-height: 11mm; color: #124e41; background: transparent; border-bottom: 2pt solid #176b57; padding: 0; }
+.pdf-page--minimal .pdf-page__party-card, .pdf-page--minimal .pdf-page__terms { border-color: #cbd5d1; }
+.pdf-page--minimal .pdf-page__party-card h2, .pdf-page--minimal .pdf-page__terms h2,
+.pdf-page--minimal .pdf-page__summary { background: #f5f8f7; }
