@@ -145,9 +145,11 @@ async function createBrowserPdfAdapters(): Promise<PdfExportAdapters> {
       element.classList.add('pdf-page--capture')
       if (hasOverflow) element.classList.add('pdf-page--capture-overflow')
 
-      // Fix: temporarily bring off-screen element into viewport so html2canvas
-      // can correctly read computed styles (borders, colors, backgrounds, fonts).
-      // Without this, left:-100000px causes html2canvas to produce unstyled output.
+      // Fix: keep the page positioned inside the off-screen surface
+      // (.pdf-export-surface is at left:-100000px) and leave it VISIBLE.
+      // html2canvas 1.4.1 renders visibility:hidden nodes as fully transparent,
+      // which produced a blank PDF. Since the surface is off-screen the user
+      // never sees the element, so we must NOT hide it.
       const prevStyle = element.style.cssText
       let restored = false
       try {
@@ -155,7 +157,6 @@ async function createBrowserPdfAdapters(): Promise<PdfExportAdapters> {
           position: 'absolute',
           left: '0',
           top: '0',
-          visibility: 'hidden',
           pointerEvents: 'none',
           zIndex: '-9999',
         })

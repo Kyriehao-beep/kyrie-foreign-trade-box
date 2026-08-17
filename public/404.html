@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>Kyrie的外贸盒子</title>
+    <script>
+      // GitHub Pages SPA fallback: when a deep link (e.g. /kyrie-foreign-trade-box/documents)
+      // is refreshed, GitHub serves this 404.html. Rewrite to the SPA entry and pass the
+      // intended route via ?p= so the app can restore it. Never redirects to the root domain.
+      (function () {
+        var pathSegmentsToKeep = 1 // keep "/kyrie-foreign-trade-box"
+        var l = window.location
+        l.replace(
+          l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+          l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?p=/' +
+          l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+          (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+          l.hash,
+        )
+      })()
+    </script>
+  </head>
+  <body>
+    <p style="font-family: sans-serif; padding: 2rem; text-align: center; color: #63736d">正在加载 Kyrie 的外贸盒子…</p>
+  </body>
+</html>
