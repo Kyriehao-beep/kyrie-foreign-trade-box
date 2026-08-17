@@ -133,14 +133,37 @@ async function createBrowserPdfAdapters(): Promise<PdfExportAdapters> {
 
   return {
     async waitForFonts() {
-      if ('fonts' in document) await document.fonts.ready
+      if ('fonts' in document) {
+        await document.fonts.ready
+        // Extra wait: fonts.ready may fire before glyphs are rasterized.
+        // A short delay + forced reflow ensures text is painted with correct metrics.
+        await new Promise((r) => setTimeout(r, 80))
+      }
     },
     async capture(element) {
       const hasOverflow = element.scrollHeight > element.clientHeight + 1
       element.classList.add('pdf-page--capture')
       if (hasOverflow) element.classList.add('pdf-page--capture-overflow')
+
+      // Fix: temporarily bring off-screen element into viewport so html2canvas
+      // can correctly read computed styles (borders, colors, backgrounds, fonts).
+      // Without this, left:-100000px causes html2canvas to produce unstyled output.
+      const prevStyle = element.style.cssText
+      let restored = false
       try {
+        Object.assign(element.style, {
+          position: 'absolute',
+          left: '0',
+          top: '0',
+          visibility: 'hidden',
+          pointerEvents: 'none',
+          zIndex: '-9999',
+        })
+        // Force layout recalculation so browser resolves all computed styles
+        void element.offsetHeight
+
         if (hasOverflow) await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
+
         return await html2canvas(element, {
           scale: 2,
           backgroundColor: '#ffffff',
@@ -150,6 +173,9 @@ async function createBrowserPdfAdapters(): Promise<PdfExportAdapters> {
           windowHeight: hasOverflow ? element.scrollHeight : undefined,
         })
       } finally {
+        // Always restore original position
+        element.style.cssText = prevStyle
+        restored = true
         element.classList.remove('pdf-page--capture')
         if (hasOverflow) element.classList.remove('pdf-page--capture-overflow')
       }
