@@ -54,7 +54,7 @@ export function CheckoutPage() {
           ) : (
             <img
               className="mx-auto mb-4 aspect-square w-full max-w-xs rounded-2xl border border-slate-200 object-contain"
-              src={`/pay/${method}.png`}
+              src={`${import.meta.env.BASE_URL}pay/${method}.png`}
               alt={method === 'wechat' ? '微信收款码' : '支付宝收款码'}
               onError={() => setImgError(true)}
             />
