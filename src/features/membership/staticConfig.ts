@@ -14,9 +14,9 @@ export const TRIAL_DAYS = 3
 
 // 会员方案（价格、时长）
 export const PLANS: PlanSummary[] = [
-  { id: 'monthly', name: '月度会员', amountCny: 59, durationDays: 30, suffix: '/月', note: '适合短期集中制单' },
-  { id: 'yearly', name: '年度会员', amountCny: 499, durationDays: 365, suffix: '/年', note: '最常选，平均每天不到 1.4 元' },
-  { id: 'lifetime', name: '永久买断', amountCny: 1299, durationDays: null, suffix: '/永久', note: '一次付费，长期可用' },
+  { id: 'monthly', name: '月度会员', amountCny: 29, durationDays: 30, suffix: '/月', note: '适合短期集中制单' },
+  { id: 'yearly', name: '年度会员', amountCny: 199, durationDays: 365, suffix: '/年', note: '最常选，平均每天不到 0.6 元' },
+  { id: 'lifetime', name: '永久买断', amountCny: 599, durationDays: null, suffix: '/永久', note: '一次付费，长期可用' },
 ]
 
 export function planName(id: PlanId): string {

@@ -8,9 +8,9 @@ import { useMembership } from '../features/membership/MembershipContext'
 import type { PlanSummary } from '../features/membership/types'
 
 const fallbackPlans: PlanSummary[] = [
-  { id: 'monthly', name: '月度订阅', amountCny: 59, durationDays: 30, suffix: '/30 天', note: '适合短期订单与低成本起步' },
-  { id: 'yearly', name: '年度订阅', amountCny: 499, durationDays: 365, suffix: '/365 天', note: '比按月购买节省 209 元' },
-  { id: 'lifetime', name: '永久买断', amountCny: 1299, durationDays: null, suffix: '/永久', note: '当前核心功能永久使用' },
+  { id: 'monthly', name: '月度订阅', amountCny: 29, durationDays: 30, suffix: '/30 天', note: '适合短期订单与低成本起步' },
+  { id: 'yearly', name: '年度订阅', amountCny: 199, durationDays: 365, suffix: '/365 天', note: '比按月购买节省 149 元' },
+  { id: 'lifetime', name: '永久买断', amountCny: 599, durationDays: null, suffix: '/永久', note: '当前核心功能永久使用' },
 ]
 
 const phaseLabels: Record<string, string> = {

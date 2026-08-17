@@ -6,9 +6,9 @@ import { Card, CardContent, CardHeader } from '../components/ui/card'
 import { DOCUMENT_TYPES } from '../domain/documents'
 
 const homePlans = [
-  { id: 'monthly', name: '月度订阅', amountCny: 59, suffix: '/30 天', note: '适合短期订单与低成本起步' },
-  { id: 'yearly', name: '年度订阅', amountCny: 499, suffix: '/365 天', note: '比按月购买节省 209 元' },
-  { id: 'lifetime', name: '永久买断', amountCny: 1299, suffix: '/永久', note: '当前核心功能永久使用' },
+  { id: 'monthly', name: '月度订阅', amountCny: 29, suffix: '/30 天', note: '适合短期订单与低成本起步' },
+  { id: 'yearly', name: '年度订阅', amountCny: 199, suffix: '/365 天', note: '比按月购买节省 149 元' },
+  { id: 'lifetime', name: '永久买断', amountCny: 599, suffix: '/永久', note: '当前核心功能永久使用' },
 ]
 
 export function HomePage() {

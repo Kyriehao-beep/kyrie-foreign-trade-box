@@ -18,7 +18,7 @@ const adminSnapshot = {
   entitlement: { phase: 'admin' as const, hasAccess: true, plan: null, expiresAt: null, trialEndsAt: null },
 }
 const user = { id: 'user-1', username: 'buyer_one', displayName: 'buyer_one', contact: 'wx_888', role: 'user' as const, status: 'active' as const, passwordResetRequired: false, createdAt: '2026-08-17T00:00:00.000Z', trialEndsAt: '2026-08-20T00:00:00.000Z', entitlement: { phase: 'trialing' as const, hasAccess: true, plan: null, expiresAt: null, trialEndsAt: '2026-08-20T00:00:00.000Z' } }
-const order: PaymentOrder = { orderId: 'KTB-20260817-ABCD1234', userId: 'user-1', username: 'buyer_one', plan: 'yearly', amountCny: 499, paymentMethod: 'alipay', payerHint: '支付宝尾号 7788', paidAtClaimed: '2026-08-17T08:30:00.000Z', status: 'pending_review', createdAt: '2026-08-17T08:00:00.000Z', claimedAt: '2026-08-17T08:31:00.000Z', reviewedAt: null }
+const order: PaymentOrder = { orderId: 'KTB-20260817-ABCD1234', userId: 'user-1', username: 'buyer_one', plan: 'yearly', amountCny: 199, paymentMethod: 'alipay', payerHint: '支付宝尾号 7788', paidAtClaimed: '2026-08-17T08:30:00.000Z', status: 'pending_review', createdAt: '2026-08-17T08:00:00.000Z', claimedAt: '2026-08-17T08:31:00.000Z', reviewedAt: null }
 
 function api(): MembershipApi {
   return { me: vi.fn().mockResolvedValue(adminSnapshot), login: vi.fn(), register: vi.fn(), logout: vi.fn(), changePassword: vi.fn(), getPlans: vi.fn(), createOrder: vi.fn(), claimOrder: vi.fn(), getOwnOrders: vi.fn() }
