@@ -5,7 +5,7 @@ import { Button } from '../components/ui/button'
 import { Card, CardContent, CardHeader } from '../components/ui/card'
 import { Input } from '../components/ui/input'
 import { useMembership } from '../features/membership/MembershipContext'
-import { request } from '../features/membership/membershipApi'
+import { WECHAT_ID } from '../features/membership/staticConfig'
 
 export function AuthPage() {
   const [mode, setMode] = useState<'register' | 'login'>('register')
@@ -20,9 +20,7 @@ export function AuthPage() {
   const { snapshot, loading, login, register, changePassword } = useMembership()
 
   useEffect(() => {
-    let active = true
-    request<{ supportContact: string }>('/api/support').then((result) => { if (active) setSupportContact(result.supportContact) }).catch(() => undefined)
-    return () => { active = false }
+    setSupportContact(WECHAT_ID)
   }, [])
 
   async function submit(event: FormEvent) {
@@ -54,7 +52,7 @@ export function AuthPage() {
           <CardContent className="p-8 sm:p-10">
             <ShieldCheck aria-hidden="true" className="mx-auto h-10 w-10 text-brand-600" />
             <h1 className="mt-5 text-2xl font-semibold">已登录：{snapshot.user.username}</h1>
-            <p className="mt-3 text-sm text-slate-600">账号与会员状态已由服务器安全验证。</p>
+            <p className="mt-3 text-sm text-slate-600">账号与会员状态已在当前设备校验。</p>
             {snapshot.user.passwordResetRequired ? <p className="mt-4 rounded-xl bg-amber-50 p-3 text-sm font-medium text-amber-800">首次登录必须更换临时密码</p> : null}
             <form className="mt-6 space-y-4 text-left" onSubmit={submitPassword}><label className="block text-sm font-medium">当前密码<Input className="mt-2" name="currentPassword" type="password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} autoComplete="current-password" minLength={8} required /></label><label className="block text-sm font-medium">新密码<Input className="mt-2" name="newPassword" type="password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} autoComplete="new-password" minLength={8} maxLength={128} required /></label>{formError ? <p className="rounded-xl bg-red-50 p-3 text-sm text-red-700" role="alert">{formError}</p> : null}<Button className="w-full" type="submit" disabled={loading}>更新密码</Button></form>
             {message ? <p className="mt-4 text-sm font-medium text-brand-700" role="status">{message}</p> : null}
@@ -68,7 +66,7 @@ export function AuthPage() {
   return (
     <main className="mx-auto grid max-w-6xl gap-8 px-5 py-12 lg:grid-cols-[1fr_480px] lg:items-center lg:px-8 lg:py-20">
       <section>
-        <span className="inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1.5 text-sm font-medium text-brand-700"><ShieldCheck aria-hidden="true" className="h-4 w-4" />服务器记录试用期，无法通过清理浏览器重置</span>
+        <span className="inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1.5 text-sm font-medium text-brand-700"><ShieldCheck aria-hidden="true" className="h-4 w-4" />试用与会员状态保存在当前设备</span>
         <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">{mode === 'register' ? '创建账号，免费试用 72 小时' : '登录 Kyrie的外贸盒子'}</h1>
         <p className="mt-5 max-w-2xl leading-7 text-slate-600">试用期内六类外贸单据、AI 模拟填单、PDF 与 Excel 导出、贸商工具箱全部开放。单据和客户资料仍保存在当前设备。</p>
       </section>

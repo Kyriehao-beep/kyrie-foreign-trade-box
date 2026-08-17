@@ -11,6 +11,7 @@ import { CheckoutPage } from './pages/CheckoutPage'
 import { HomePage } from './pages/HomePage'
 import { MembershipPage } from './pages/MembershipPage'
 import { ToolboxPage } from './pages/ToolboxPage'
+import { UnlockPage } from './pages/UnlockPage'
 
 const navigation = [
   { to: '/', label: '首页' },
@@ -51,8 +52,8 @@ export function ProtectedFeature({ children }: { children: ReactNode }) {
   const anonymous = snapshot.entitlement.phase === 'anonymous'
   const suspended = snapshot.entitlement.phase === 'suspended'
   const title = unavailable ? '暂时无法验证会员状态' : suspended ? '账号已停用' : anonymous ? '登录后开启 3 天完整试用' : '3 天完整试用已结束'
-  const description = unavailable ? '为了保护您的会员权益，系统无法连接服务器时不会放行付费功能。请检查网络后重试。' : suspended ? '请联系人工客服核实账号状态，恢复后即可继续使用。' : anonymous ? '创建账号即可免费使用全部功能 72 小时，无需绑定银行卡。' : '选择月度、年度或永久买断方案，提交付款信息后由管理员人工开通。'
-  return <main className="mx-auto grid min-h-[70vh] max-w-3xl place-items-center px-5 py-16"><div className="w-full rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-soft sm:p-12"><span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-brand-50 text-brand-700">{unavailable ? <RefreshCw className="h-6 w-6" /> : <LockKeyhole className="h-6 w-6" />}</span><h1 className="mt-6 text-3xl font-semibold">{title}</h1><p className="mx-auto mt-4 max-w-xl leading-7 text-slate-600">{description}</p>{unavailable ? <Button className="mt-7" onClick={() => void refresh()}>重新验证</Button> : !suspended ? <Button asChild className="mt-7"><Link to={anonymous ? '/auth' : '/membership'}>{anonymous ? '登录 / 注册' : '查看会员方案'}</Link></Button> : null}</div></main>
+  const description = unavailable ? '为了保护您的会员权益，系统无法连接服务器时不会放行付费功能。请检查网络后重试。' : suspended ? '请联系人工客服核实账号状态，恢复后即可继续使用。' : anonymous ? '创建账号即可免费使用全部功能 72 小时，无需绑定银行卡。' : '试用已结束。付款后由管理员发放解锁码，输入即可继续使用。'
+  return <main className="mx-auto grid min-h-[70vh] max-w-3xl place-items-center px-5 py-16"><div className="w-full rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-soft sm:p-12"><span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-brand-50 text-brand-700">{unavailable ? <RefreshCw className="h-6 w-6" /> : <LockKeyhole className="h-6 w-6" />}</span><h1 className="mt-6 text-3xl font-semibold">{title}</h1><p className="mx-auto mt-4 max-w-xl leading-7 text-slate-600">{description}</p>{unavailable ? <Button className="mt-7" onClick={() => void refresh()}>重新验证</Button> : !suspended ? <div className="mt-7 flex flex-wrap justify-center gap-3"><Button asChild><Link to={anonymous ? '/auth' : '/membership'}>{anonymous ? '登录 / 注册' : '查看会员方案'}</Link></Button><Button asChild variant="outline"><Link to="/unlock">我有解锁码</Link></Button></div> : null}</div></main>
 }
 
 export function App() {
@@ -69,6 +70,7 @@ export function App() {
           <Route path="/membership" element={<MembershipPage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/checkout/:plan" element={<CheckoutPage />} />
+          <Route path="/unlock" element={<UnlockPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="*" element={<main className="mx-auto min-h-[70vh] max-w-3xl px-5 py-20 text-center"><h1 className="text-4xl font-semibold">页面不存在</h1><Button asChild className="mt-6"><Link to="/">返回首页</Link></Button></main>} />
         </Routes></div>

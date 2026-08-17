@@ -1,20 +1,58 @@
-import { request } from './membershipApi'
-import type { EntitlementSummary, PaymentOrder, PlanId, UserSummary } from './types'
+import { newCode } from './codes'
+import { ADMIN_PASSWORD } from './staticConfig'
+import type { PlanId } from './types'
 
-export interface AdminUser extends UserSummary { trialEndsAt: string | null; entitlement: EntitlementSummary }
-export interface AuditEvent { id: string; adminUsername: string; action: string; targetId: string; createdAt: string }
-export interface PaymentSettings { wechatConfigured: boolean; alipayConfigured: boolean; supportContact: string }
+const ADMIN_KEY = 'ktb_admin_v1'
+
+export interface GeneratedCode {
+  code: string
+  plan: PlanId
+  createdAt: string
+}
+
+interface AdminState {
+  codes: GeneratedCode[]
+  session: boolean
+}
+
+function load(): AdminState {
+  try {
+    const raw = localStorage.getItem(ADMIN_KEY)
+    if (raw) return JSON.parse(raw) as AdminState
+  } catch {
+    /* ignore */
+  }
+  return { codes: [], session: false }
+}
+
+function save(state: AdminState): void {
+  localStorage.setItem(ADMIN_KEY, JSON.stringify(state))
+}
 
 export const adminApi = {
-  users: () => request<AdminUser[]>('/api/admin/users'),
-  orders: () => request<PaymentOrder[]>('/api/admin/orders'),
-  audit: () => request<AuditEvent[]>('/api/admin/audit'),
-  paymentSettings: () => request<PaymentSettings>('/api/admin/payment-settings'),
-  confirmOrder: (orderId: string, note = '') => request(`/api/admin/orders/${encodeURIComponent(orderId)}/confirm`, { method: 'POST', body: JSON.stringify({ note }) }),
-  rejectOrder: (orderId: string, note: string, adminNote = '') => request(`/api/admin/orders/${encodeURIComponent(orderId)}/reject`, { method: 'POST', body: JSON.stringify({ note, adminNote }) }),
-  changeUserStatus: (userId: string, status: 'active' | 'suspended') => request(`/api/admin/users/${encodeURIComponent(userId)}/status`, { method: 'POST', body: JSON.stringify({ status }) }),
-  resetPassword: (userId: string) => request<{ temporaryPassword: string }>(`/api/admin/users/${encodeURIComponent(userId)}/reset-password`, { method: 'POST' }),
-  grantEntitlement: (userId: string, plan: PlanId, idempotencyKey: string) => request(`/api/admin/users/${encodeURIComponent(userId)}/entitlement`, { method: 'POST', body: JSON.stringify({ plan, idempotencyKey }) }),
-  grantDays: (userId: string, days: number, idempotencyKey: string) => request(`/api/admin/users/${encodeURIComponent(userId)}/entitlement`, { method: 'POST', body: JSON.stringify({ days, idempotencyKey }) }),
-  uploadQr: (formData: FormData) => request('/api/admin/payment-settings', { method: 'POST', body: formData }),
+  login(password: string): boolean {
+    if (password !== ADMIN_PASSWORD) return false
+    const state = load()
+    state.session = true
+    save(state)
+    return true
+  },
+  isLoggedIn(): boolean {
+    return load().session === true
+  },
+  logout(): void {
+    const state = load()
+    state.session = false
+    save(state)
+  },
+  generateCode(plan: PlanId): string {
+    const state = load()
+    const code = newCode(plan)
+    state.codes = [{ code, plan, createdAt: new Date().toISOString() }, ...state.codes]
+    save(state)
+    return code
+  },
+  listCodes(): GeneratedCode[] {
+    return load().codes
+  },
 }
