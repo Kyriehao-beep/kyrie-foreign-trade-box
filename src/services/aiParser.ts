@@ -1,4 +1,6 @@
 import { createLineItem, type LineItem, type Party, type TradeTerms } from '../domain/documents'
+import { type AiConfig, loadAiConfig } from './aiSettings'
+import { callChatCompletion } from './aiClient'
 
 export interface ParseResult {
   patch: {
@@ -188,4 +190,18 @@ export function parseLLMResult(text: string): ParseResult {
   const json = extractJsonObject(text.trim())
   if (!json) throw new Error('没有在内容中找到 JSON，请确认粘贴的是 AI 返回的 JSON 结果（可包含解释文字）。')
   return fromJson(json)
+}
+
+const AI_SYSTEM_PROMPT =
+  '你是专业的外贸制单助手，负责从外贸资料、客户询盘或订单中准确提取结构化字段。只返回 JSON 对象，不要任何解释文字或 markdown 代码块标记。'
+
+// 直连用户自带 Key 的服务商，一步完成「识别 → 结构化 → 填单」。
+// config 缺省时回退读取本地配置；未配置则抛出友好错误。
+export async function extractWithAI(source: string, config?: AiConfig | null): Promise<ParseResult> {
+  const cfg = config ?? loadAiConfig()
+  if (!cfg?.apiKey) {
+    throw new Error('尚未配置 AI 服务，请先在面板中填写 API Key。')
+  }
+  const text = await callChatCompletion(cfg, AI_SYSTEM_PROMPT, buildExtractionPrompt(source))
+  return parseLLMResult(text)
 }
