@@ -40,7 +40,7 @@ page.on('request', (req) => {
 
 function clickByText(text) {
   return page.evaluate((t) => {
-    const btn = [...document.querySelectorAll('button')].find((b) => b.textContent.includes(t))
+    const btn = [...document.querySelectorAll('button, a')].find((b) => b.textContent.includes(t))
     if (btn) { btn.click(); return true }
     return false
   }, text)
@@ -60,16 +60,36 @@ check('跟单助手页面标题渲染', home.includes('跟单助手') && home.in
 check('空状态显示新增入口', home.includes('新增跟单'))
 check('空状态统计为 0', home.includes('客户总数') && /\b0\b/.test(home))
 
+// ---- A2. 左侧分组导航（桌面视口）----
+await page.setViewport({ width: 1280, height: 900 })
+await new Promise((r) => setTimeout(r, 300))
+const sidebar = await page.evaluate(() => document.body.innerText)
+check('侧栏含「跟单助手」直达项', sidebar.includes('跟单助手'))
+check('侧栏含「外贸单据中心」', sidebar.includes('外贸单据中心'))
+check('侧栏含「贸商工具箱」', sidebar.includes('贸商工具箱'))
+await clickByText('外贸单据中心')
+await page.waitForSelector('input[aria-label^="买方公司名称"]', { timeout: 15000 })
+check('侧栏点击进入单据中心', page.url().includes('/documents'))
+await clickByText('跟单助手')
+await page.waitForSelector('main', { timeout: 15000 })
+check('侧栏点击返回跟单助手', page.url().includes('/follow-up'))
+
 // ---- B. 新增一条跟单 ----
 await clickByText('新增跟单')
 await new Promise((r) => setTimeout(r, 300))
 await page.type('input[aria-label="客户公司名称"]', '测试客户A')
 await page.type('input[aria-label="国家地区"]', '中国')
+await clickByText('高')
 await clickByText('创建跟单')
 await new Promise((r) => setTimeout(r, 400))
 const afterAdd = await page.evaluate(() => document.body.innerText)
 check('新增后卡片出现客户名', afterAdd.includes('测试客户A'))
 check('新增后默认阶段为洽谈', afterAdd.includes('洽谈'))
+const prioCard = await page.evaluate(() => {
+  const li = [...document.querySelectorAll('li')].find((l) => l.textContent.includes('测试客户A'))
+  return li ? li.textContent : ''
+})
+check('新增后卡片显示优先级「高」', prioCard.includes('高'))
 
 // ---- C. 统计变为 1 ----
 const stats1 = await page.evaluate(() => {
@@ -78,6 +98,22 @@ const stats1 = await page.evaluate(() => {
   return total ? total.parentElement?.querySelector('p:nth-child(2)')?.textContent : ''
 })
 check('统计客户总数为 1', stats1.trim() === '1', `value=${stats1}`)
+
+// ---- C2. 优先级 + 紧急度 + 跟进时间线 ----
+// 展开测试客户A的跟进记录，添加备注，并采纳业务员建议
+await clickByText('跟进记录')
+await new Promise((r) => setTimeout(r, 300))
+await page.type('textarea[aria-label="添加跟进记录"]', '客户已确认需求，等待报价反馈')
+await clickByText('加备注')
+await new Promise((r) => setTimeout(r, 400))
+const afterNote = await page.evaluate(() => document.body.innerText)
+check('时间线出现跟进备注', afterNote.includes('客户已确认需求，等待报价反馈'))
+check('时间线计数增加到 1', afterNote.includes('跟进记录（1）'))
+await clickByText('采纳并排期')
+await new Promise((r) => setTimeout(r, 400))
+const afterAdopt = await page.evaluate(() => document.body.innerText)
+check('采纳建议记录系统活动', afterAdopt.includes('已采纳建议'))
+check('采纳后显示下次跟进日期', afterAdopt.includes('下次跟进：'))
 
 // ---- D. 联动出向：单据 → 跟单助手 ----
 await page.goto(BASE_URL + '/documents', { waitUntil: 'networkidle2' })
