@@ -1,7 +1,8 @@
-// 极简 OpenAI 兼容客户端：浏览器直接调用，零后端。
-// 调用方负责传入已配置好的 AiConfig（来自 aiSettings）。
-
-import { type AiConfig, getProvider } from './aiSettings'
+// 极简 OpenAI 兼容客户端：调用站点统一代理（密钥在服务端，前端零密钥）。
+//
+// 代理约定（见 worker/ai-proxy.js）：
+//   前端 POST { system, user }
+//   代理返回 { content: "..." } 或 OpenAI 兼容 { choices: [{ message: { content } }] }
 
 export type AiErrorCode = 'auth' | 'rate_limit' | 'network' | 'bad_response' | 'no_config'
 
@@ -15,59 +16,41 @@ export class AiCallError extends Error {
 }
 
 export async function callChatCompletion(
-  config: AiConfig,
+  config: { endpoint: string },
   systemPrompt: string,
   userPrompt: string,
 ): Promise<string> {
-  const provider = getProvider(config.providerId)
-  const baseUrl = config.providerId === 'custom' ? config.baseUrl : provider?.baseUrl
-  if (!baseUrl) throw new AiCallError('bad_response', '未配置有效的 API 地址，请检查服务商选择。')
-  if (!config.apiKey) throw new AiCallError('no_config', '缺少 API Key。')
-  if (!config.model) throw new AiCallError('bad_response', '未配置模型名称。')
-
-  const url = `${baseUrl.replace(/\/$/, '')}/chat/completions`
-  const body: Record<string, unknown> = {
-    model: config.model,
-    messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userPrompt },
-    ],
-    temperature: 0.1,
-  }
-  if (provider?.jsonMode ?? true) {
-    body.response_format = { type: 'json_object' }
-  }
+  const endpoint = config.endpoint.trim()
+  if (!endpoint) throw new AiCallError('no_config', 'AI 代理未配置，请联系站长开启。')
 
   let res: Response
   try {
-    res = await fetch(url, {
+    res = await fetch(endpoint, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${config.apiKey}`,
-      },
-      body: JSON.stringify(body),
-      // 不携带 cookie，密钥仅通过 Authorization 头发送
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ system: systemPrompt, user: userPrompt }),
+      // 不携带 cookie；代理地址由站长配置，密钥在服务端
       credentials: 'omit',
     })
   } catch (reason) {
     if (reason instanceof TypeError) {
-      throw new AiCallError(
-        'network',
-        '网络或跨域(CORS)错误：该服务可能不支持浏览器直接调用，或当前网络不可达。',
-      )
+      throw new AiCallError('network', '网络或跨域(CORS)错误：无法连接 AI 代理服务，请稍后重试。')
     }
     throw new AiCallError('network', '请求失败，请检查网络后重试。')
   }
 
-  if (res.status === 401) throw new AiCallError('auth', 'API Key 无效或权限不足，请检查密钥。')
-  if (res.status === 429) throw new AiCallError('rate_limit', '调用频率或额度超限，请稍后重试或检查账户余额。')
-  if (!res.ok) throw new AiCallError('bad_response', `服务返回错误（${res.status}），请确认模型名与地址。`)
+  if (res.status === 401) throw new AiCallError('auth', 'AI 代理鉴权失败，请检查代理配置。')
+  if (res.status === 429) throw new AiCallError('rate_limit', 'AI 调用频率或额度超限，请稍后重试。')
+  if (!res.ok) {
+    const body = (await res.json().catch(() => null)) as { error?: string; message?: string } | null
+    const detail = body?.error || body?.message
+    throw new AiCallError('bad_response', detail ? `AI 代理返回错误：${detail}` : `AI 代理返回错误（${res.status}）。`)
+  }
 
   const data = (await res.json().catch(() => null)) as
-    | { choices?: { message?: { content?: string } }[] }
+    | { content?: string; choices?: { message?: { content?: string } }[] }
     | null
-  const text = data?.choices?.[0]?.message?.content
-  if (!text) throw new AiCallError('bad_response', '接口未返回有效内容，请重试。')
+  const text = data?.content || data?.choices?.[0]?.message?.content || ''
+  if (!text) throw new AiCallError('bad_response', 'AI 代理未返回有效内容，请重试。')
   return text
 }

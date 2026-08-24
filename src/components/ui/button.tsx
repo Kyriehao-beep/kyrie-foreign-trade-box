@@ -8,6 +8,7 @@ const buttonVariants = cva('inline-flex min-h-10 items-center justify-center gap
     variant: {
       default: 'bg-brand-600 text-white shadow-md shadow-emerald-900/10 hover:bg-brand-700',
       outline: 'border border-slate-200 bg-white text-slate-700 hover:border-brand-200 hover:text-brand-700',
+      secondary: 'bg-white text-brand-700 shadow-md hover:bg-brand-50',
       ghost: 'text-slate-600 hover:bg-brand-50 hover:text-brand-700',
       danger: 'bg-red-50 text-red-700 hover:bg-red-100',
     },

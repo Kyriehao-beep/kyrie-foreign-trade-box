@@ -68,3 +68,14 @@ export function savePartyTemplate(template: PartyTemplate, storage = browserStor
     return { ok: false, error: '当前浏览器无法保存资料模板' }
   }
 }
+
+export function deletePartyTemplate(id: string, storage = browserStorage()): StorageWriteResult {
+  if (!storage) return { ok: false, error: '当前浏览器无法删除资料模板' }
+  try {
+    const current = loadPartyTemplates(storage).value.filter((item) => item.id !== id)
+    storage.setItem(storageKeys.partyTemplates, JSON.stringify(current))
+    return { ok: true }
+  } catch {
+    return { ok: false, error: '当前浏览器无法删除资料模板' }
+  }
+}

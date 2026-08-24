@@ -28,30 +28,27 @@ const server = http.createServer((req, res) => {
 })
 await new Promise((r) => server.listen(PORT, r))
 
-// 用 evaluateOnNewDocument 注入 fetch 桩：该脚本在每次新文档（含 reload）前执行，
-// 因此能跨 reload 存活，确保一键识别走桩返回而非真实网络。
+// 用 evaluateOnNewDocument 注入 fetch 桩：跨 reload 存活，模拟站点代理返回。
 const STUB_PAYLOAD = {
   buyer: { companyName: '北辰户外用品有限公司', country: '中国' },
   items: [{ name: '硅胶徽章', quantity: 500, unit: '个', unitPrice: 2.8, currency: '美元' }],
   trade: { incoterm: 'FOB 深圳', paymentTerm: '见提单副本付清' },
 }
+const PROXY_URL = 'https://ai.proxy.local/v1/ai'
 
 const browserPath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 const browser = await puppeteer.launch({ executablePath: browserPath, headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'] })
 const page = await browser.newPage()
-// 用 evaluateOnNewDocument 注入 fetch 桩：该脚本在每次新文档（含 reload）前执行，
-// 因此能跨 reload 存活，确保一键识别走桩返回而非真实网络。
-await page.evaluateOnNewDocument((payload) => {
+await page.evaluateOnNewDocument((payload, proxyUrl) => {
   const orig = window.fetch ? window.fetch.bind(window) : null
-  const stubResponse = { ok: true, status: 200, json: async () => ({ choices: [{ message: { content: JSON.stringify(payload) } }] }) }
+  const stubResponse = { ok: true, status: 200, json: async () => ({ content: JSON.stringify(payload) }) }
   window.fetch = async (input, init) => {
     const url = typeof input === 'string' ? input : (input && input.url)
-    if (url && url.includes('chat/completions')) return stubResponse
+    if (url && url.includes(proxyUrl)) return stubResponse
     return orig ? orig(input, init) : new Response('{}')
   }
-}, STUB_PAYLOAD)
+}, STUB_PAYLOAD, PROXY_URL)
 page.on('pageerror', (e) => console.log('PAGEERROR', e.message))
-// 放行本地资源，仅拦截已知的外部汇率接口（frankfurter），使 networkidle2 可达
 await page.setRequestInterception(true)
 page.on('request', (req) => {
   if (req.url().includes('frankfurter')) req.abort()
@@ -62,38 +59,26 @@ await page.goto(BASE_URL + '/documents', { waitUntil: 'networkidle2' })
 await page.waitForSelector('section', { timeout: 15000 })
 await new Promise((r) => setTimeout(r, 500))
 
-// ---- Test 1: no config -> settings form visible, one-click disabled, hint shown ----
+// ---- Test 1: no proxy endpoint -> one-click disabled, owner-enables note shown ----
 const initial = await page.evaluate(() => {
   const body = document.body.innerText
+  const oneClick = [...document.querySelectorAll('button')].find((b) => b.textContent.includes('AI 一键识别并填单'))
   return {
-    hasSettingsForm: body.includes('AI 服务设置'),
-    hasFreeHint: body.includes('免费额度') || body.includes('极便宜') || body.includes('免费模型'),
-    oneClickDisabled: !!document.querySelector('button[disabled]') && body.includes('AI 一键识别并填单'),
-    securityNote: body.includes('仅保存在你本机浏览器'),
+    hasTextarea: !!document.querySelector('textarea[aria-label="待识别的外贸资料"]'),
+    oneClickDisabled: oneClick ? oneClick.disabled : null,
+    ownerNote: body.includes('AI 识别由站长统一开启'),
+    hasManual: !!document.querySelector('button'),
   }
 })
-check('未配置时展示 AI 设置表单', initial.hasSettingsForm)
-check('设置表单展示低成本/免费额度说明', initial.hasFreeHint)
-check('未配置时一键识别按钮禁用', initial.oneClickDisabled)
-check('设置表单含密钥安全说明', initial.securityNote)
+check('识别面板含资料输入框', initial.hasTextarea)
+check('未配置代理时一键识别按钮禁用', initial.oneClickDisabled === true)
+check('未配置代理时显示「站长统一开启」提示', initial.ownerNote)
 
-// ---- Test 2: one-click flow with stubbed fetch (injected via evaluateOnNewDocument) ----
-await page.evaluate(() => {
-  localStorage.setItem('ktb_ai_config', JSON.stringify({
-    providerId: 'siliconflow',
-    apiKey: 'test-key',
-    model: 'Qwen/Qwen2.5-7B-Instruct',
-  }))
-})
+// ---- Test 2: set proxy endpoint + stubbed fetch -> one-click fills fields ----
+await page.evaluate((url) => { localStorage.setItem('ktb_ai_endpoint', url) }, PROXY_URL)
 await page.reload({ waitUntil: 'networkidle2' })
 await page.waitForSelector('section', { timeout: 15000 })
 await new Promise((r) => setTimeout(r, 500))
-
-const panel = await page.evaluate(() => {
-  const ta = document.querySelector('textarea[aria-label="待识别的外贸资料"]')
-  return { hasTextarea: !!ta }
-})
-check('识别面板含资料输入框', panel.hasTextarea)
 
 await page.type('textarea[aria-label="待识别的外贸资料"]', '客户：北辰户外用品有限公司，500个硅胶徽章，单价2.80美元，FOB深圳，见提单副本付清。')
 const clicked = await page.evaluate(() => {
@@ -122,8 +107,8 @@ check('一键识别后贸易术语被填充', filled.incoterm.includes('FOB'), `
 check('一键识别后付款方式被填充', filled.payment.includes('提单'), `payment=${filled.payment}`)
 check('识别后展示待人工核对提示', filled.reviewBadge)
 
-// ---- Test 3: manual fallback (no config, paste JSON) ----
-await page.evaluate(() => { localStorage.removeItem('ktb_ai_config') })
+// ---- Test 3: manual fallback (no endpoint, paste JSON) ----
+await page.evaluate(() => { localStorage.removeItem('ktb_ai_endpoint') })
 await page.reload({ waitUntil: 'networkidle2' })
 await page.waitForSelector('section', { timeout: 15000 })
 await new Promise((r) => setTimeout(r, 400))

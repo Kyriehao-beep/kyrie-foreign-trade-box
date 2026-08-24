@@ -1,0 +1,14 @@
+name = "ktb-ai-proxy"
+main = "worker/ai-proxy.js"
+compatibility_date = "2024-09-23"
+
+# 非密钥配置（可直接写在这里）
+[vars]
+AI_PROVIDER_URL = "https://api.deepseek.com/v1"
+AI_MODEL = "deepseek-chat"
+# 只允许你的前端域名调用，多个用逗号分隔。强烈建议设置，防止代理被他人盗用。
+CORS_ORIGIN = "https://kyriehao-beep.github.io"
+
+# 密钥 AI_PROVIDER_KEY 不要写明文，用以下命令以 secret 形式配置：
+#   npx wrangler secret put AI_PROVIDER_KEY
+# 按提示粘贴你的 API Key（例如 DeepSeek / SiliconFlow / OpenAI 的 Key）。

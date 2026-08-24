@@ -4,6 +4,7 @@ import { Button } from '../components/ui/button'
 import { Card, CardContent, CardHeader } from '../components/ui/card'
 import { Input } from '../components/ui/input'
 import { adminApi } from '../features/membership/adminApi'
+import { getAiEndpoint, saveAiEndpoint, clearAiEndpoint } from '../services/aiSettings'
 import { PLANS, WECHAT_ID, CONTACT_TIP } from '../features/membership/staticConfig'
 import type { PlanId } from '../features/membership/types'
 
@@ -13,6 +14,24 @@ export function AdminPage() {
   const [pwErr, setPwErr] = useState('')
   const [codes, setCodes] = useState(adminApi.listCodes())
   const [copied, setCopied] = useState('')
+  const [endpoint, setEndpoint] = useState(getAiEndpoint())
+  const [endpointMsg, setEndpointMsg] = useState('')
+
+  function saveEndpoint() {
+    const url = endpoint.trim()
+    if (!url) {
+      setEndpointMsg('请输入代理地址，或清空以使用构建时注入的默认值。')
+      return
+    }
+    saveAiEndpoint(url)
+    setEndpointMsg('AI 代理地址已保存，全站用户立即可用「AI 一键识别」。')
+  }
+
+  function resetEndpoint() {
+    clearAiEndpoint()
+    setEndpoint(getAiEndpoint())
+    setEndpointMsg('已清除本地代理地址，将回退到构建时注入的默认值（若有）。')
+  }
 
   function login(event: FormEvent) {
     event.preventDefault()
@@ -97,6 +116,27 @@ export function AdminPage() {
           <p>微信：<span className="font-semibold text-ink">{WECHAT_ID}</span></p>
           <p className="mt-1">{CONTACT_TIP}</p>
           <p className="mt-1 text-slate-400">收款码图片请放到项目 public/pay/wechat.png 与 alipay.png 后重新部署。</p>
+        </CardContent>
+      </Card>
+
+      <Card className="mb-6">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <KeyRound className="h-5 w-5 text-brand-600" />
+            <h2 className="text-lg font-semibold">AI 识别代理设置</h2>
+          </div>
+          <p className="text-sm text-slate-500">填入你部署的 AI 代理地址（含密钥，部署说明见项目 docs/AI代理部署指南.md）。设置后全站用户即可一键识别，无需各自配置 API。留空则使用构建时注入的默认值。</p>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <label className="block text-sm font-medium">
+            代理地址（Endpoint）
+            <Input value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="https://your-worker.your-subdomain.workers.dev" />
+          </label>
+          {endpointMsg ? <p className="text-sm text-brand-700">{endpointMsg}</p> : null}
+          <div className="flex flex-wrap gap-3">
+            <Button onClick={saveEndpoint}>保存代理地址</Button>
+            <Button variant="ghost" onClick={resetEndpoint}>清除本地设置</Button>
+          </div>
         </CardContent>
       </Card>
 

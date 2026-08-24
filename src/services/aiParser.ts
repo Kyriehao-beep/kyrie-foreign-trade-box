@@ -195,12 +195,12 @@ export function parseLLMResult(text: string): ParseResult {
 const AI_SYSTEM_PROMPT =
   '你是专业的外贸制单助手，负责从外贸资料、客户询盘或订单中准确提取结构化字段。只返回 JSON 对象，不要任何解释文字或 markdown 代码块标记。'
 
-// 直连用户自带 Key 的服务商，一步完成「识别 → 结构化 → 填单」。
-// config 缺省时回退读取本地配置；未配置则抛出友好错误。
+// 调用站点统一代理完成「识别 → 结构化 → 填单」（密钥在服务端，前端零密钥）。
+// config 缺省时回退读取本地代理地址；未配置则抛出友好错误，引导使用手动方式。
 export async function extractWithAI(source: string, config?: AiConfig | null): Promise<ParseResult> {
   const cfg = config ?? loadAiConfig()
-  if (!cfg?.apiKey) {
-    throw new Error('尚未配置 AI 服务，请先在面板中填写 API Key。')
+  if (!cfg?.endpoint) {
+    throw new Error('AI 识别暂未开启（站点尚未配置代理）。你仍可用下方「手动方式」填单，或联系站长开启。')
   }
   const text = await callChatCompletion(cfg, AI_SYSTEM_PROMPT, buildExtractionPrompt(source))
   return parseLLMResult(text)

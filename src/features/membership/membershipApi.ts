@@ -1,8 +1,20 @@
 import type { MembershipApi, MembershipSnapshot, PaymentOrder, PlanId, PlanSummary, UserSummary } from './types'
-import { PLANS, TRIAL_DAYS, planDurationDays } from './staticConfig'
+import { ADMIN_STORAGE_KEY, PLANS, TRIAL_DAYS, planDurationDays } from './staticConfig'
 import { verifyCode, hashPassword } from './codes'
 
 const STORAGE_KEY = 'ktb_static_v1'
+
+// 管理员是否在 /admin 已登录（会话存于独立键，会员逻辑据此授予产品访问权）
+function adminSessionActive(): boolean {
+  try {
+    const raw = localStorage.getItem(ADMIN_STORAGE_KEY)
+    if (!raw) return false
+    const parsed = JSON.parse(raw) as { session?: boolean }
+    return parsed.session === true
+  } catch {
+    return false
+  }
+}
 
 interface LocalAccount {
   id: string
@@ -69,6 +81,14 @@ function computeEntitlement(state: LocalState): { entitlement: MembershipSnapsho
     const plan = state.unlocked.plan
     const phase = plan === 'lifetime' ? 'active_lifetime' : plan === 'yearly' ? 'active_yearly' : 'active_monthly'
     return { entitlement: { phase, hasAccess: true, plan, expiresAt: state.unlocked.expiresAt, trialEndsAt: null }, user }
+  }
+
+  // 管理员已登录 /admin → 始终拥有产品访问权（方便内部测试，不受试用到期限制）
+  if (adminSessionActive()) {
+    return {
+      entitlement: { phase: 'active_lifetime', hasAccess: true, plan: 'lifetime', expiresAt: null, trialEndsAt: null },
+      user: { ...user, role: 'admin' },
+    }
   }
 
   const firstVisit = state.firstVisit ?? new Date().toISOString()

@@ -1,7 +1,9 @@
 import type { PlanId, PlanSummary } from './types'
 
-// 改这里：管理密码（登录 /admin 用）
-export const ADMIN_PASSWORD = 'kyrie-admin-2026'
+// 改这里：管理密码数组（任一匹配即可登录 /admin，最多 3 个席位）
+export const ADMIN_PASSWORDS = ['wiz1', 'wiz2', 'wiz3']
+// 管理员会话存储键（会员逻辑据此判定管理员是否已拥有产品访问权）
+export const ADMIN_STORAGE_KEY = 'ktb_admin_v1'
 // 改这里：解锁码密钥。注意：改了会让已发出的解锁码失效。
 export const UNLOCK_SECRET = 'ktb-unlock-secret-2026-change-me'
 // 改这里：你的微信号（付款后用户加你领码）

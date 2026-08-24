@@ -50,6 +50,13 @@ export function MembershipProvider({ children, api = membershipApi }: { children
 
   useEffect(() => { void refresh() }, [refresh])
 
+  // 管理员在 /admin 登录/退出后，刷新产品侧权限（同一 SPA 会话内即时生效）
+  useEffect(() => {
+    const onAdminChange = () => void refresh()
+    window.addEventListener('ktb-admin-changed', onAdminChange)
+    return () => window.removeEventListener('ktb-admin-changed', onAdminChange)
+  }, [refresh])
+
   const logout = useCallback(async () => {
     await api.logout()
     requestId.current += 1

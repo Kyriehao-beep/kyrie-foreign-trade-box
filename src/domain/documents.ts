@@ -77,6 +77,7 @@ export interface DocumentDraft {
   layout: DocumentLayout
   updatedAt: string
   reviewFields: string[]
+  logo: string
 }
 
 export interface DocumentTotals {
@@ -161,6 +162,7 @@ export function createEmptyDraft(type: DocumentType): DocumentDraft {
     layout: 'modern',
     updatedAt: now.toISOString(),
     reviewFields: [],
+    logo: '',
   }
 }
 

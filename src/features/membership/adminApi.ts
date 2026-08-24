@@ -1,8 +1,8 @@
 import { newCode } from './codes'
-import { ADMIN_PASSWORD } from './staticConfig'
+import { ADMIN_PASSWORDS, ADMIN_STORAGE_KEY } from './staticConfig'
 import type { PlanId } from './types'
 
-const ADMIN_KEY = 'ktb_admin_v1'
+const ADMIN_KEY = ADMIN_STORAGE_KEY
 
 export interface GeneratedCode {
   code: string
@@ -31,10 +31,11 @@ function save(state: AdminState): void {
 
 export const adminApi = {
   login(password: string): boolean {
-    if (password !== ADMIN_PASSWORD) return false
+    if (!ADMIN_PASSWORDS.includes(password)) return false
     const state = load()
     state.session = true
     save(state)
+    window.dispatchEvent(new Event('ktb-admin-changed'))
     return true
   },
   isLoggedIn(): boolean {
@@ -44,6 +45,7 @@ export const adminApi = {
     const state = load()
     state.session = false
     save(state)
+    window.dispatchEvent(new Event('ktb-admin-changed'))
   },
   generateCode(plan: PlanId): string {
     const state = load()

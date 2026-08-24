@@ -31,7 +31,10 @@ function DocumentPdfPage({ page }: { page: PdfPageModel }) {
       data-testid={`pdf-page-${page.pageNumber}`}
     >
       <header className="pdf-page__brand">
-        <span>{draft.seller.companyName || 'Kyrie的外贸盒子'}</span>
+        <div className="pdf-page__brand-left">
+          {draft.logo ? <img src={draft.logo} alt="公司 Logo" className="pdf-page__brand-logo" /> : null}
+          <span>{draft.seller.companyName || 'Kyrie的外贸盒子'}</span>
+        </div>
         <small>{label(draft, '本地生成 · 商务单据', 'LOCAL BUSINESS DOCUMENT')}</small>
       </header>
 

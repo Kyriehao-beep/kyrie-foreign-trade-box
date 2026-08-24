@@ -20,7 +20,10 @@ export function DocumentPreview({ draft }: { draft: DocumentDraft }) {
     <article data-testid="document-preview" id="document-print-area" className={`mx-auto min-h-[840px] w-full min-w-0 max-w-[760px] bg-white p-6 text-slate-900 shadow-soft sm:p-9 ${draft.layout === 'classic' ? 'font-serif' : ''}`}>
       <header className={`border-b-4 pb-5 ${accent}`}>
         <div className="flex items-start justify-between gap-5">
-          <div><p className="text-xs font-semibold tracking-[0.18em] text-brand-700">{draft.seller.companyName || '卖方企业名称'}</p><h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">{title}</h2></div>
+          <div className="flex items-start gap-4">
+            {draft.logo ? <img src={draft.logo} alt="公司 Logo" className="mt-1 h-12 w-auto max-w-[160px] object-contain" /> : null}
+            <div><p className="text-xs font-semibold tracking-[0.18em] text-brand-700">{draft.seller.companyName || '卖方企业名称'}</p><h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">{title}</h2></div>
+          </div>
           <div className="text-right text-[11px] leading-5 text-slate-500"><p>{label(draft, '单据编号', 'DOCUMENT NO.')}：{draft.documentNumber}</p><p>{label(draft, '日期', 'DATE')}：{draft.issueDate}</p></div>
         </div>
       </header>

@@ -6,7 +6,7 @@ const tools = [
   { icon: PackageSearch, name: 'HS 编码查询', note: '前往海关公共查询服务核对编码', href: 'http://online.customs.gov.cn/' },
   { icon: Container, name: '集装箱尺寸参考', note: '查看常用柜型装载尺寸提示', href: 'https://www.maersk.com/support/faqs/container-dimensions' },
   { icon: Box, name: '国际快递查询', note: '前往通用物流轨迹查询入口', href: 'https://www.17track.net/zh-cn' },
-  { icon: Calculator, name: '外贸报价计算器', note: '使用当前单据的数量和单价汇总', href: '/documents' },
+  { icon: Calculator, name: '外贸报价计算器', note: '算清 FOB/CIF 报价、利润与退税', href: '/toolbox' },
 ]
 
 export function ToolShortcuts() {

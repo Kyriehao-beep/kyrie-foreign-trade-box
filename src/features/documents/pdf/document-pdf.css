@@ -37,6 +37,8 @@
   background: #124e41;
 }
 
+.pdf-page__brand-left { display: flex; align-items: center; gap: 3mm; min-width: 0; }
+.pdf-page__brand-logo { height: 11mm; width: auto; max-width: 55mm; object-fit: contain; }
 .pdf-page__brand span { font-size: 17pt; font-weight: 700; }
 .pdf-page__brand small { font-size: 7.5pt; opacity: .82; }
 

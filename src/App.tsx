@@ -5,6 +5,7 @@ import { Button } from './components/ui/button'
 import { MembershipProvider, useMembership } from './features/membership/MembershipContext'
 import { TrialBanner } from './features/membership/TrialBanner'
 import { DocumentCenterPage } from './pages/DocumentCenterPage'
+import { FollowUpPage } from './pages/FollowUpPage'
 import { AuthPage } from './pages/AuthPage'
 import { AdminPage } from './pages/AdminPage'
 import { CheckoutPage } from './pages/CheckoutPage'
@@ -12,6 +13,7 @@ import { HomePage } from './pages/HomePage'
 import { MembershipPage } from './pages/MembershipPage'
 import { ToolboxPage } from './pages/ToolboxPage'
 import { UnlockPage } from './pages/UnlockPage'
+import { WorldTimeBar } from './components/WorldTimeBar'
 
 const navigation = [
   { to: '/', label: '首页' },
@@ -62,10 +64,12 @@ export function App() {
       <div className="min-h-screen bg-paper text-ink">
         <a href="#main-content" className="sr-only z-[100] rounded-lg bg-white px-4 py-3 text-sm font-semibold text-brand-700 shadow focus:not-sr-only focus:fixed focus:left-4 focus:top-4">跳至主要内容</a>
         <AppHeader />
+        <WorldTimeBar />
         <TrialBanner />
         <div id="main-content" tabIndex={-1}><Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/documents" element={<ProtectedFeature><DocumentCenterPage /></ProtectedFeature>} />
+          <Route path="/follow-up" element={<ProtectedFeature><FollowUpPage /></ProtectedFeature>} />
           <Route path="/toolbox" element={<ProtectedFeature><ToolboxPage /></ProtectedFeature>} />
           <Route path="/membership" element={<MembershipPage />} />
           <Route path="/auth" element={<AuthPage />} />
