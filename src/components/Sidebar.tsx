@@ -4,6 +4,8 @@ import { useEffect, type ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
 import { Box, CreditCard, FileText, Home, ShieldCheck, Users, Wrench, X } from 'lucide-react'
 import { useMembership } from '../features/membership/MembershipContext'
+import { adminApi } from '../features/membership/adminApi'
+import { getAdminToken, isBackendEnabled } from '../services/apiClient'
 
 interface NavItem {
   to: string
@@ -41,7 +43,11 @@ function Brand() {
 
 function NavContent({ onNavigate }: { onNavigate?: () => void }) {
   const { snapshot } = useMembership()
-  const isAdmin = snapshot.user?.role === 'admin'
+  const backend = isBackendEnabled()
+  // 管理后台入口只在「已登录站长」可见：本地模式看本地管理员标记，后端模式看 admin token。
+  const isAdmin =
+    snapshot.user?.role === 'admin' || (backend ? !!getAdminToken() : adminApi.isLoggedIn())
+
   return (
     <nav className="space-y-5" aria-label="主导航">
       {GROUPS.map((group) => (
@@ -50,8 +56,6 @@ function NavContent({ onNavigate }: { onNavigate?: () => void }) {
           <ul className="space-y-0.5">
             {group.items.map((item) => {
               const Icon = item.icon
-              const adminOnly = item.to === '/admin'
-              if (adminOnly && !isAdmin) return null
               return (
                 <li key={item.to}>
                   <NavLink
@@ -74,27 +78,33 @@ function NavContent({ onNavigate }: { onNavigate?: () => void }) {
                 </li>
               )
             })}
-            {isAdmin ? (
-              <li>
-                <NavLink
-                  to="/admin"
-                  onClick={onNavigate}
-                  className={({ isActive }) =>
-                    `group flex min-h-[44px] items-center gap-3 rounded-xl border-l-[3px] px-3 text-sm font-medium transition ${
-                      isActive
-                        ? 'border-brand-600 bg-brand-50 text-brand-700'
-                        : 'border-transparent text-slate-600 hover:bg-slate-50 hover:text-ink'
-                    }`
-                  }
-                >
-                  <ShieldCheck className="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
-                  <span className="flex-1">管理后台</span>
-                </NavLink>
-              </li>
-            ) : null}
           </ul>
         </div>
       ))}
+
+      {isAdmin ? (
+        <div className="mt-1 border-t border-slate-200 pt-4">
+          <p className="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-amber-600">站长专用</p>
+          <ul className="space-y-0.5">
+            <li>
+              <NavLink
+                to="/admin"
+                onClick={onNavigate}
+                className={({ isActive }) =>
+                  `group flex min-h-[44px] items-center gap-3 rounded-xl border-l-[3px] px-3 text-sm font-medium transition ${
+                    isActive
+                      ? 'border-amber-500 bg-amber-50 text-amber-700'
+                      : 'border-transparent text-slate-600 hover:bg-amber-50/60 hover:text-amber-700'
+                  }`
+                }
+              >
+                <ShieldCheck className="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
+                <span className="flex-1">管理后台</span>
+              </NavLink>
+            </li>
+          </ul>
+        </div>
+      ) : null}
     </nav>
   )
 }
