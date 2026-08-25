@@ -1,4 +1,4 @@
-import { KeyRound, Loader2 } from 'lucide-react'
+import { KeyRound, Loader2, Server } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/button'
@@ -6,7 +6,8 @@ import { Card, CardContent, CardHeader } from '../components/ui/card'
 import { Input } from '../components/ui/input'
 import { redeemCode } from '../features/membership/membershipApi'
 import { useMembership } from '../features/membership/MembershipContext'
-import { planName } from '../features/membership/staticConfig'
+import { planName, WECHAT_ID } from '../features/membership/staticConfig'
+import { isBackendEnabled } from '../services/apiClient'
 import type { PlanId } from '../features/membership/types'
 
 export function UnlockPage() {
@@ -32,6 +33,30 @@ export function UnlockPage() {
     } finally {
       setBusy(false)
     }
+  }
+
+  if (isBackendEnabled()) {
+    return (
+      <main className="mx-auto max-w-md px-5 py-16">
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <Server className="h-6 w-6 text-brand-600" />
+              <h1 className="text-2xl font-semibold">会员由服务端管理</h1>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="rounded-xl bg-brand-50 p-4 text-sm leading-6 text-brand-700">
+              本站已启用服务端会员校验，会员开通由站长在后台按用户名直接发放，不再使用解锁码。
+              付款后请联系站长（微信：{WECHAT_ID}）开通，随后在「登录 / 注册」页用你的账号登录即可使用。
+            </p>
+            <Button asChild className="mt-4 w-full">
+              <Link to="/auth">前往登录 / 注册</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </main>
+    )
   }
 
   return (

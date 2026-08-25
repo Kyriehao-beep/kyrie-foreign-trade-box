@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { membershipApi } from './membershipApi'
+import { getMembershipApi } from './apiSelector'
 import type { MembershipApi, MembershipSnapshot, PaymentOrder, PlanId, PlanSummary } from './types'
 
 const anonymousSnapshot: MembershipSnapshot = {
@@ -25,7 +25,7 @@ interface MembershipContextValue {
 
 const MembershipContext = createContext<MembershipContextValue | null>(null)
 
-export function MembershipProvider({ children, api = membershipApi }: { children: ReactNode; api?: MembershipApi }) {
+export function MembershipProvider({ children, api = getMembershipApi() }: { children: ReactNode; api?: MembershipApi }) {
   const [snapshot, setSnapshot] = useState<MembershipSnapshot>(anonymousSnapshot)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
