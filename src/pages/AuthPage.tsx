@@ -68,7 +68,7 @@ export function AuthPage() {
       <section>
         <span className="inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1.5 text-sm font-medium text-brand-700"><ShieldCheck aria-hidden="true" className="h-4 w-4" />试用与会员状态保存在当前设备</span>
         <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">{mode === 'register' ? '创建账号，免费试用 15 天' : '登录 Kyrie的外贸盒子'}</h1>
-        <p className="mt-5 max-w-2xl leading-7 text-slate-600">试用期内六类外贸单据、AI 模拟填单、PDF 与 Excel 导出、贸商工具箱全部开放。单据和客户资料仍保存在当前设备。</p>
+        <p className="mt-5 max-w-2xl leading-7 text-slate-600">试用期内六类外贸单据、跟单助手、PDF 与 Excel 导出、贸商工具箱全部开放。单据和客户资料仍保存在当前设备。</p>
       </section>
 
       <Card>

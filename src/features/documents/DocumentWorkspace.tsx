@@ -19,12 +19,10 @@ import {
   type TradeTerms,
   type SettlementCustoms,
 } from '../../domain/documents'
-import type { ParseResult } from '../../services/aiParser'
 import { getFollowUp, upsertFromDraft } from '../../services/followUpStore'
 import { exportExcelDocument } from '../../services/excelExport'
 import { exportPdfDocument } from '../../services/pdfExport'
 import { clearDraft, deletePartyTemplate, loadDraft, loadPartyTemplates, saveDraft, savePartyTemplate } from '../../services/storage'
-import { AIPastePanel } from './AIPastePanel'
 import { DocumentPreview } from './DocumentPreview'
 import { DocumentPdfExportSurface } from './pdf/DocumentPdfTemplate'
 
@@ -107,17 +105,6 @@ export function DocumentWorkspace() {
     setDraft((current) => ({
       ...current,
       items: current.items.map((item) => item.id === id ? { ...item, [key]: numericKeys.includes(key) ? Number(value) : value } : item),
-    }))
-  }
-
-  function applyAI(result: ParseResult) {
-    setDraft((current) => ({
-      ...current,
-      seller: { ...current.seller, ...result.patch.seller },
-      buyer: { ...current.buyer, ...result.patch.buyer },
-      items: result.patch.items ?? current.items,
-      trade: { ...current.trade, ...result.patch.trade },
-      reviewFields: result.reviewFields,
     }))
   }
 
@@ -259,7 +246,6 @@ export function DocumentWorkspace() {
 
       <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(520px,.95fr)]">
         <div className={`${mobileView === 'preview' ? 'hidden lg:block' : ''} min-w-0 space-y-4 print:hidden`}>
-          <AIPastePanel onApply={applyAI} />
           {draft.reviewFields.length > 0 ? <div className="flex flex-wrap items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800"><strong>请人工核对：</strong>{draft.reviewFields.map((field) => <span key={field} className="rounded-full bg-white px-2 py-1">{field}</span>)}</div> : null}
 
           <Card className="p-5">

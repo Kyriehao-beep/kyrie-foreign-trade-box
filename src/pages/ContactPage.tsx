@@ -92,7 +92,7 @@ export default function ContactPage() {
             <ul className="mt-3 space-y-2">
               {[
                 '工具箱功能咨询 / 使用指导 / Bug 反馈',
-                '企业定制需求评估（单据格式 / AI 规则 / 私有工具）',
+                '企业定制需求评估（单据格式 / 报价模型 / 私有工具）',
                 '外贸流程数字化建议（不推销，只给适合你的方案）',
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2 text-sm text-slate-300">
@@ -137,7 +137,7 @@ export default function ContactPage() {
       <div className="mt-12 rounded-2xl bg-gradient-to-r from-brand-600 to-emerald-600 p-8 text-center text-white">
         <h2 className="text-xl font-bold">还没想好？先去试试工具箱</h2>
         <p className="mt-2 text-sm text-white/80">
-          15 天免费试用，6 类单据 + AI 识别 + 跟单助手 + 报价计算，全部打开浏览器就能用。
+          15 天免费试用，6 类单据 + 跟单助手 + 报价计算 + 工具箱，全部打开浏览器就能用。
         </p>
         <Link
           to="/"

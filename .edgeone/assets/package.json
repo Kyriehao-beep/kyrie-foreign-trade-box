@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && mkdir -p dist/server && cp worker/index.js dist/server/index.js && node --test tests/hosting-layout.check.mjs",
+    "build": "tsc -b && vite build && node scripts/copy-404.mjs && mkdir -p dist/server && cp worker/index.js dist/server/index.js && node --test tests/hosting-layout.check.mjs",
     "build:edgeone": "tsc -b && vite build --outDir dist/edgeone && node scripts/prepare-edgeone.mjs && node --test tests/edgeone-layout.check.mjs",
     "test": "vitest",
     "test:server": "node --test tests/server/*.test.mjs",
@@ -39,6 +39,7 @@
     "autoprefixer": "^10.4.20",
     "jsdom": "^25.0.1",
     "postcss": "^8.4.49",
+    "puppeteer-core": "^25.8.0",
     "tailwindcss": "^3.4.16",
     "typescript": "^5.7.2",
     "vite": "^5.4.21",

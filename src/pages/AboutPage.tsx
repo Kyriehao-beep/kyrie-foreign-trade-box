@@ -1,4 +1,4 @@
-import { MessageCircle, Wrench, Bot, Globe, Rocket, Heart, CheckCircle2, ArrowRight, Sparkles, TrendingUp, Clock, Zap } from 'lucide-react'
+import { MessageCircle, Wrench, Globe, Rocket, Heart, CheckCircle2, ArrowRight, Sparkles, TrendingUp, Clock, Zap } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 /* ── 定制服务项（销售导向定价卡）────────────────── */
@@ -16,9 +16,9 @@ const SERVICES = [
     num: '02',
     price: '199',
     unit: '/套',
-    icon: <Bot className="h-5 w-5" />,
-    title: 'AI 识别规则调优',
-    desc: '针对你常收到的询盘类型（邮件 / WhatsApp / 社私消息），训练 AI 一键识别并自动填表。越用越准，把"复制粘贴→手动填"变成"粘贴→一键完成"。',
+    icon: <TrendingUp className="h-5 w-5" />,
+    title: '报价与利润模型搭建',
+    desc: '针对你的产品线和目标市场，搭建专属报价计算器——成本结构、利润率、退税、汇损全部预设好，输入数量和汇率直接出报价，不再每次手算。',
     badge: '效率翻倍',
   },
   {
@@ -36,7 +36,7 @@ const SERVICES = [
     unit: '',
     icon: <Globe className="h-5 w-5" />,
     title: '工具箱使用咨询',
-    desc: '已上线的全部功能（单据 / AI / 跟单 / 报价 / 汇率 / 时间），有任何问题或新功能建议，随时聊。能做的马上做，不藏着掖着。',
+    desc: '已上线的全部功能（单据 / 跟单 / 报价 / 汇率 / 时间），有任何问题或新功能建议，随时聊。能做的马上做，不藏着掖着。',
     badge: '随时欢迎',
   },
 ]
@@ -46,7 +46,7 @@ const PAIN_POINTS = [
   {
     icon: <Clock className="h-6 w-6" />,
     pain: '每天花 2 小时在"复制粘贴、对格式、算汇率"',
-    solution: '单据模板 + AI 一键识别 + 报价助手，自动化搞定',
+    solution: '单据模板 + 报价助手 + 汇率换算，自动化搞定',
   },
   {
     icon: <TrendingUp className="h-6 w-6" />,
@@ -60,8 +60,8 @@ const PAIN_POINTS = [
   },
   {
     icon: <Sparkles className="h-6 w-6" />,
-    pain: '客户发来一大段询盘，要一个个字段手填',
-    solution: 'AI 粘贴识别：粘进去，自动拆成表单字段，填完直接生成单据',
+    pain: '客户资料和产品明细散落在 Excel / 微信 / 记事本里，做单时到处找',
+    solution: '买卖方资料模板 + 产品明细复用，一次录入，所有单据自动带出',
   },
 ]
 
@@ -141,17 +141,17 @@ export default function AboutPage() {
           </div>
           <h2 className="text-xl font-bold text-slate-900">这个网站本身就是证明</h2>
           <p className="mt-2 text-sm leading-relaxed text-slate-600">
-            我不是在卖 PPT 方案。你现在看到的这个工具箱——从单据生成到 AI 识别、
-            从跟单管理到世界时区——每一行代码都是我在实际外贸工作中踩过坑后，
+            我不是在卖 PPT 方案。你现在看到的这个工具箱——从单据生成到跟单管理、
+            从报价计算到世界时区——每一行代码都是我在实际外贸工作中踩过坑后，
             一个个做出来给自己用的。<strong>能帮到我，就能帮到你。</strong>
           </p>
 
           <ul className="mt-4 space-y-2.5">
             {[
               '6 类外贸单据（报价单 / PI / 发票 / 装箱单 / 合同 / 报关单）',
-              'AI 一键识别客户询盘并自动填表（DeepSeek 驱动）',
               '跟单助手（优先级 / 紧急度 / 时间线 / 业务建议剧本）',
               '报价助手 + 实时汇率 + 世界时区栏',
+              'PDF 与 Excel 一键导出，买卖方资料模板复用',
               '纯前端运行，数据存你的浏览器，隐私零风险',
             ].map((item) => (
               <li key={item} className="flex items-start gap-2 text-sm text-slate-700">

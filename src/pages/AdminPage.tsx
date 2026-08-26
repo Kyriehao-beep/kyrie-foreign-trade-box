@@ -6,57 +6,10 @@ import { Input } from '../components/ui/input'
 import { adminApi } from '../features/membership/adminApi'
 import { backendAdminApi, type AdminMemberRow } from '../features/membership/backendAdminApi'
 import { isBackendEnabled } from '../services/apiClient'
-import { getAiEndpoint, saveAiEndpoint, clearAiEndpoint } from '../services/aiSettings'
 import { PLANS, WECHAT_ID, CONTACT_TIP } from '../features/membership/staticConfig'
 import type { PlanId } from '../features/membership/types'
 
 const backend = isBackendEnabled()
-
-/** AI 识别代理设置（本地模式与后端模式共用）。 */
-function AiProxyCard() {
-  const [endpoint, setEndpoint] = useState(getAiEndpoint())
-  const [endpointMsg, setEndpointMsg] = useState('')
-
-  function saveEndpoint() {
-    const url = endpoint.trim()
-    if (!url) {
-      setEndpointMsg('请输入代理地址，或清空以使用构建时注入的默认值。')
-      return
-    }
-    saveAiEndpoint(url)
-    setEndpointMsg('AI 代理地址已保存，全站用户立即可用「AI 一键识别」。')
-  }
-  function resetEndpoint() {
-    clearAiEndpoint()
-    setEndpoint(getAiEndpoint())
-    setEndpointMsg('已清除本地代理地址，将回退到构建时注入的默认值（若有）。')
-  }
-
-  return (
-    <Card className="mb-6">
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <KeyRound className="h-5 w-5 text-brand-600" />
-          <h2 className="text-lg font-semibold">AI 识别代理设置</h2>
-        </div>
-        <p className="text-sm text-slate-500">
-          默认已指向本站同域 EdgeOne 函数 <code className="rounded bg-slate-100 px-1">/api/ai-proxy</code>（国内可达，前端零密钥）。站长只需在 EdgeOne 控制台为项目设置环境变量 <code className="rounded bg-slate-100 px-1">AI_PROVIDER_KEY</code> / <code className="rounded bg-slate-100 px-1">AI_PROVIDER_URL</code> / <code className="rounded bg-slate-100 px-1">AI_MODEL</code> 即可启用。如需自定义代理地址可在此填写并保存。
-        </p>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        <label className="block text-sm font-medium">
-          代理地址（Endpoint）
-          <Input value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="/api/ai-proxy（同域默认，国内可达）" />
-        </label>
-        {endpointMsg ? <p className="text-sm text-brand-700">{endpointMsg}</p> : null}
-        <div className="flex flex-wrap gap-3">
-          <Button onClick={saveEndpoint}>保存代理地址</Button>
-          <Button variant="ghost" onClick={resetEndpoint}>清除本地设置</Button>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
 
 /** 本地模式：解锁码管理（纯前端，可离线验证）。 */
 function LocalAdmin() {
@@ -151,7 +104,6 @@ function LocalAdmin() {
         </CardContent>
       </Card>
 
-      <AiProxyCard />
 
       <Card>
         <CardHeader>
@@ -370,7 +322,6 @@ function BackendAdmin() {
         </CardContent>
       </Card>
 
-      <AiProxyCard />
 
       {msg ? <p className="text-sm font-medium text-brand-700">{msg}</p> : null}
     </main>

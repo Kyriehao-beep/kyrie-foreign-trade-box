@@ -2,7 +2,7 @@
 // 把「跟单助手」作为直达项放在「业务」分组，解决原先只能回首页下滑才能进入的问题。
 import { useEffect, type ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
-import { ArrowLeftRight, Box, Calculator, CreditCard, FileText, Globe2, Home, MessageSquare, ShieldCheck, UserCircle, Users, X } from 'lucide-react'
+import { ArrowLeftRight, Box, Calculator, FileText, Globe2, Home, MessageSquare, ShieldCheck, UserCircle, Users, X } from 'lucide-react'
 import { useMembership } from '../features/membership/MembershipContext'
 import { adminApi } from '../features/membership/adminApi'
 import { getAdminToken, isBackendEnabled } from '../services/apiClient'
@@ -31,7 +31,7 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
       { to: '/world', label: '世界时间', icon: Globe2 },
     ],
   },
-  { label: '账户', items: [{ to: '/membership', label: '会员中心', icon: CreditCard }, { to: '/contact', label: '联系站长', icon: MessageSquare }, { to: '/about', label: '关于 & 定制', icon: UserCircle }] },
+  { label: '账户', items: [{ to: '/contact', label: '联系站长', icon: MessageSquare }, { to: '/about', label: '关于 & 定制', icon: UserCircle }] },
 ]
 
 function Brand() {
@@ -135,7 +135,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
         <NavContent />
       </div>
       <div className="border-t border-slate-100 px-4 py-3 text-[11px] leading-relaxed text-slate-400">
-        数据均保存在本机浏览器<br />会员功能由站长统一管理
+        数据均保存在本机浏览器<br />工具免费使用，定制需求加微信聊
       </div>
     </aside>
   )

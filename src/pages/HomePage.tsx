@@ -1,4 +1,4 @@
-import { ArrowLeftRight, ArrowRight, Bot, Calculator, Check, FileSpreadsheet, Globe2, Layers, ShieldCheck, Sparkles, Users } from 'lucide-react'
+import { ArrowLeftRight, ArrowRight, Calculator, Check, FileSpreadsheet, Globe2, Layers, ShieldCheck, Sparkles, Users } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Badge } from '../components/ui/badge'
 import { Button } from '../components/ui/button'
@@ -7,9 +7,9 @@ import { Reveal } from '../components/Reveal'
 import { DOCUMENT_TYPES } from '../domain/documents'
 
 const homePlans = [
-  { id: 'monthly', name: '月度订阅', amountCny: 29, suffix: '/30 天', note: '适合短期订单与低成本起步' },
-  { id: 'yearly', name: '年度订阅', amountCny: 199, suffix: '/365 天', note: '比按月购买省 149 元，且已含未来上线的新工具' },
-  { id: 'lifetime', name: '永久买断', amountCny: 599, suffix: '/永久', note: '当前核心功能永久使用' },
+  { id: 'monthly', name: '体验包', amountCny: 9.9, suffix: '/30 天', note: '一杯奶茶钱，完整试用全部工具' },
+  { id: 'yearly', name: '年度会员', amountCny: 79, suffix: '/年', note: '平均每天不到 0.22 元，比按月省 40 元' },
+  { id: 'lifetime', name: '总包（终身）', amountCny: 199, suffix: '/永久', note: '一次付费，现有 + 未来新工具永久免费' },
 ]
 
 // 贸商工具矩阵 —— 后续新增工具只改这个数组即可（icon / 标题 / 描述 / 入口）
@@ -17,7 +17,6 @@ const homeTools = [
   { icon: Calculator, title: '外贸报价助手', desc: '上传产品图，自动测算 FOB/CIF 报价、利润与退税，一键生成 PI 与报价话术。', to: '/quote', tag: '热门' },
   { icon: ArrowLeftRight, title: '汇率换算器', desc: '在线汇率失败时自动切换带日期的离线参考数据，跨境报价不卡壳。', to: '/exchange' },
   { icon: Globe2, title: '世界时间', desc: '一眼判断海外客户是否处于工作时间，减少跨时区无效等待。', to: '/world' },
-  { icon: Bot, title: 'AI 粘贴识别', desc: '把客户询盘或订单备注粘贴进来，解析器自动填入明确字段。', to: '/documents' },
   { icon: FileSpreadsheet, title: '单据制作', desc: '六种外贸单据，一套资料持续复用，支持 PDF 与 Excel 导出。', to: '/documents' },
   { icon: Users, title: '跟单助手', desc: '把谈成的客户收进来，按洽谈→报价→下单→出货→收款跟进，做单据时一键加入。', to: '/follow-up', tag: '新' },
 ]
@@ -35,7 +34,7 @@ export function HomePage() {
           <div>
             <Badge><Sparkles className="mr-1.5 h-3.5 w-3.5" />为中国外贸人打造的效率工作台</Badge>
             <h1 className="mt-6 max-w-3xl text-5xl font-semibold leading-[1.08] tracking-[-0.04em] text-ink sm:text-6xl">报价、单据、汇率、跨时区沟通，<br /><span className="text-brand-600">一处搞定，把时间还给成交。</span></h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">Kyrie 外贸工作台把六种外贸单据、FOB/CIF 报价测算、AI 粘贴识别、世界时间与汇率换算收进一个本地优先的工作台。新手三分钟上手，老外贸每天省下两小时。</p>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">Kyrie 外贸工作台把六种外贸单据、FOB/CIF 报价测算、跟单助手、世界时间与汇率换算收进一个本地优先的工作台。新手三分钟上手，老外贸每天省下两小时。</p>
             <div className="mt-9 flex flex-wrap gap-3">
               <Button asChild size="lg"><Link to="/documents">开始制作单据<ArrowRight className="h-4 w-4" /></Link></Button>
               <Button asChild size="lg" variant="outline"><Link to="/toolbox">打开贸商工具箱</Link></Button>
@@ -135,7 +134,7 @@ export function HomePage() {
         <div className="animate-drift-2 pointer-events-none absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-sky-500/10 blur-3xl" />
         <div className="relative mx-auto grid max-w-7xl gap-8 px-5 py-20 lg:grid-cols-3 lg:px-8">
           {[
-            { icon: Bot, title: 'AI 粘贴识别', text: '把客户询盘或订单备注粘贴进来，示例解析器自动填入明确字段。' },
+            { icon: Users, title: '跟单助手', text: '把客户收进来，按洽谈→报价→下单→出货→收款全流程跟进，优先级、紧急度、业务剧本一目了然。' },
             { icon: Globe2, title: '跨时区沟通', text: '快速判断海外客户是否处于工作时间，减少无效等待。' },
             { icon: Calculator, title: '报价与效率工具', text: 'FOB/CIF 报价测算、汇率换算，在线数据不可用时自动切换离线参考。' },
           ].map(({ icon: Icon, title, text }) => (
@@ -176,7 +175,7 @@ export function HomePage() {
                   </CardHeader>
                   <CardContent>
                     <p><span className="text-4xl font-semibold tracking-tight">¥{plan.amountCny}</span><span className="ml-1 text-sm text-slate-500">{plan.suffix}</span></p>
-                    <ul className="mt-6 space-y-3 text-sm text-slate-600">{['六类外贸单据', 'AI 识别填单', 'PDF 与 Excel 导出', '贸商工具箱及后续新工具'].map((item) => <li key={item} className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-brand-600" />{item}</li>)}</ul>
+                    <ul className="mt-6 space-y-3 text-sm text-slate-600">{['六类外贸单据', '跟单助手（优先级/时间线/业务剧本）', 'PDF 与 Excel 导出', '贸商工具箱及后续新工具'].map((item) => <li key={item} className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-brand-600" />{item}</li>)}</ul>
                     <Button asChild className="mt-7 w-full"><Link to="/membership">选择{plan.name}</Link></Button>
                   </CardContent>
                 </Card>

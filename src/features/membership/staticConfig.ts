@@ -30,9 +30,9 @@ export const TRIAL_DAYS = 15
 
 // 会员方案（价格、时长）
 export const PLANS: PlanSummary[] = [
-  { id: 'monthly', name: '月度会员', amountCny: 29, durationDays: 30, suffix: '/月', note: '适合短期集中制单' },
-  { id: 'yearly', name: '年度会员', amountCny: 199, durationDays: 365, suffix: '/年', note: '最常选，平均每天不到 0.6 元' },
-  { id: 'lifetime', name: '永久买断', amountCny: 599, durationDays: null, suffix: '/永久', note: '一次付费，长期可用' },
+  { id: 'monthly', name: '体验包', amountCny: 9.9, durationDays: 30, suffix: '/30 天', note: '一杯奶茶钱，完整试用全部工具' },
+  { id: 'yearly', name: '年度会员', amountCny: 79, durationDays: 365, suffix: '/年', note: '平均每天不到 0.22 元，比按月省 40 元' },
+  { id: 'lifetime', name: '总包（终身）', amountCny: 199, durationDays: null, suffix: '/永久', note: '一次付费，现有工具 + 未来所有新工具永久免费' },
 ]
 
 export function planName(id: PlanId): string {

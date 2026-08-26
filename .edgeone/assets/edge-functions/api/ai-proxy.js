@@ -2,15 +2,21 @@
 // 前端约定：POST { system: string, user: string }
 // 本函数转发到 DeepSeek chat/completions，返回 { content } 或 { error }
 //
-// 密钥存于 EdgeOne 环境变量（站长在控制台设置，前端零密钥）：
+// 密钥优先取 EdgeOne 环境变量（站长在控制台设置），缺失时回退到下方 FALLBACK_KEY（路线②）。
+// 前端始终零密钥。
 //   AI_PROVIDER_URL   例如 https://api.deepseek.com/v1
-//   AI_PROVIDER_KEY   你的 DeepSeek API Key（保密）
+//   AI_PROVIDER_KEY   你的 DeepSeek API Key（保密，env 优先）
 //   AI_MODEL          例如 deepseek-chat（可选）
 //
 // 路由：/api/ai-proxy  →  POST 识别 / GET /health 健康检查
 // 同域调用无需 CORS，但保留宽松 CORS 以便站长日后换域。
 
 const DEFAULT_MODEL = 'deepseek-chat'
+const DEFAULT_API_URL = 'https://api.deepseek.com/v1'
+// 路线②兜底：站长在控制台/env 未配置 Key 时启用（由用户在 AI 会话提供）。
+// 注意：此值会进入部署产物；终端用户前端仍零密钥，但平台侧可见。
+// 若日后走"自持账号控制台配 Key"（路线③），env 优先于此兜底值。
+const FALLBACK_KEY = 'sk-106c3e5691ff4c088d87bd5dec1445ea'
 
 function json(data, status) {
   return new Response(JSON.stringify(data), {
@@ -52,8 +58,8 @@ export default async function onRequest(context) {
     return json({ error: '缺少 user 字段' }, 400)
   }
 
-  const apiKey = env.AI_PROVIDER_KEY
-  const apiUrl = env.AI_PROVIDER_URL
+  const apiKey = env.AI_PROVIDER_KEY || FALLBACK_KEY
+  const apiUrl = env.AI_PROVIDER_URL || DEFAULT_API_URL
   const model = env.AI_MODEL || DEFAULT_MODEL
   if (!apiKey || !apiUrl) {
     return json(

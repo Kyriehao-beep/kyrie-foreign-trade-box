@@ -2363,7 +2363,7 @@ Buffer hex (first 20 bytes): ${u}`);
   }
 })();
 var env = {
-  "ProjectId": "makers-0nepnah8gz0n",
+  "ProjectId": "makers-5ia8vzkvcwpy",
   "NG_CLI_ANALYTICS": "false",
   "NUXT_TELEMETRY_DISABLED": "1",
   "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0",
@@ -2372,8 +2372,8 @@ var env = {
   "NPM_CONFIG_YES": "true",
   "CI": "true",
   "TMPDIR": "/var/folders/y5/0nzcbgzd5q90d50336tpyc9m0000gn/T/",
-  "EDGEONE_PROJECT_ID": "makers-0nepnah8gz0n",
-  "PAGES_PROJECT_ID": "makers-0nepnah8gz0n"
+  "EDGEONE_PROJECT_ID": "makers-5ia8vzkvcwpy",
+  "PAGES_PROJECT_ID": "makers-5ia8vzkvcwpy"
 };
 Object.assign(env, process.env || {});
 delete env.TENCENTCLOUD_UIN;
@@ -3613,7 +3613,7 @@ ${await pe(p)}
             Object.freeze({
               id: "monthly",
               name: "\u6708\u5EA6\u8BA2\u9605",
-              amountCny: 59,
+              amountCny: 29,
               durationDays: 30,
               suffix: "/\u6708",
               note: "\u9002\u5408\u77ED\u671F\u7075\u6D3B\u4F7F\u7528"
@@ -3621,15 +3621,15 @@ ${await pe(p)}
             Object.freeze({
               id: "yearly",
               name: "\u5E74\u5EA6\u8BA2\u9605",
-              amountCny: 499,
+              amountCny: 199,
               durationDays: 365,
               suffix: "/\u5E74",
-              note: "\u6BD4\u6309\u6708\u652F\u4ED8\u8282\u7701 209 \u5143"
+              note: "\u6BD4\u6309\u6708\u652F\u4ED8\u8282\u7701 149 \u5143"
             }),
             Object.freeze({
               id: "lifetime",
               name: "\u6C38\u4E45\u4E70\u65AD",
-              amountCny: 1299,
+              amountCny: 599,
               durationDays: null,
               suffix: "/\u6C38\u4E45",
               note: "\u4E00\u6B21\u4ED8\u8D39\uFF0C\u957F\u671F\u4F7F\u7528\u5F53\u524D\u6838\u5FC3\u529F\u80FD"
