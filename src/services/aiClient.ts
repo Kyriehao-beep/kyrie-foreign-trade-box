@@ -23,20 +23,30 @@ export async function callChatCompletion(
   const endpoint = config.endpoint.trim()
   if (!endpoint) throw new AiCallError('no_config', 'AI 代理未配置，请联系站长开启。')
 
+  // 30 秒超时，避免代理不可达时 UI 永久转圈
+  const controller = new AbortController()
+  const timer = window.setTimeout(() => controller.abort(), 30_000)
+
   let res: Response
   try {
     res = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ system: systemPrompt, user: userPrompt }),
-      // 不携带 cookie；代理地址由站长配置，密钥在服务端
       credentials: 'omit',
+      signal: controller.signal,
     })
   } catch (reason) {
+    clearTimeout(timer)
+    if (reason instanceof DOMException && reason.name === 'AbortError') {
+      throw new AiCallError('network', 'AI 代理响应超时（30秒），请检查代理地址是否正确或网络是否通畅。')
+    }
     if (reason instanceof TypeError) {
       throw new AiCallError('network', '网络或跨域(CORS)错误：无法连接 AI 代理服务，请稍后重试。')
     }
     throw new AiCallError('network', '请求失败，请检查网络后重试。')
+  } finally {
+    clearTimeout(timer)
   }
 
   if (res.status === 401) throw new AiCallError('auth', 'AI 代理鉴权失败，请检查代理配置。')
