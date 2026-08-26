@@ -1,4 +1,4 @@
-import { ArrowRight, Bot, Calculator, Check, FileSpreadsheet, Globe2, Layers, ShieldCheck, Sparkles, Users } from 'lucide-react'
+import { ArrowLeftRight, ArrowRight, Bot, Calculator, Check, FileSpreadsheet, Globe2, Layers, ShieldCheck, Sparkles, Users } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Badge } from '../components/ui/badge'
 import { Button } from '../components/ui/button'
@@ -14,9 +14,9 @@ const homePlans = [
 
 // 贸商工具矩阵 —— 后续新增工具只改这个数组即可（icon / 标题 / 描述 / 入口）
 const homeTools = [
-  { icon: Calculator, title: '外贸报价助手', desc: '上传产品图，自动测算 FOB/CIF 报价、利润与退税，一键生成 PI 与报价话术。', to: '/toolbox', tag: '热门' },
-  { icon: Calculator, title: '汇率换算器', desc: '在线汇率失败时自动切换带日期的离线参考数据，跨境报价不卡壳。', to: '/toolbox' },
-  { icon: Globe2, title: '世界时间', desc: '一眼判断海外客户是否处于工作时间，减少跨时区无效等待。', to: '/toolbox' },
+  { icon: Calculator, title: '外贸报价助手', desc: '上传产品图，自动测算 FOB/CIF 报价、利润与退税，一键生成 PI 与报价话术。', to: '/quote', tag: '热门' },
+  { icon: ArrowLeftRight, title: '汇率换算器', desc: '在线汇率失败时自动切换带日期的离线参考数据，跨境报价不卡壳。', to: '/exchange' },
+  { icon: Globe2, title: '世界时间', desc: '一眼判断海外客户是否处于工作时间，减少跨时区无效等待。', to: '/world' },
   { icon: Bot, title: 'AI 粘贴识别', desc: '把客户询盘或订单备注粘贴进来，解析器自动填入明确字段。', to: '/documents' },
   { icon: FileSpreadsheet, title: '单据制作', desc: '六种外贸单据，一套资料持续复用，支持 PDF 与 Excel 导出。', to: '/documents' },
   { icon: Users, title: '跟单助手', desc: '把谈成的客户收进来，按洽谈→报价→下单→出货→收款跟进，做单据时一键加入。', to: '/follow-up', tag: '新' },

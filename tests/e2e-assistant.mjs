@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer-core'
 import { execSync } from 'child_process'
 
-const BASE = 'http://localhost:4173/kyrie-foreign-trade-box/toolbox'
+const BASE = 'http://localhost:4173/kyrie-foreign-trade-box/quote'
 
 async function findBrowser() {
   try {

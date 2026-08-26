@@ -1,6 +1,6 @@
 import { Box, LockKeyhole, Menu, RefreshCw, ShieldCheck, UserCircle } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
-import { Link, NavLink, Route, Routes } from 'react-router-dom'
+import { Link, NavLink, Navigate, Route, Routes } from 'react-router-dom'
 import { Button } from './components/ui/button'
 import { Sidebar } from './components/Sidebar'
 import { MembershipProvider, useMembership } from './features/membership/MembershipContext'
@@ -13,7 +13,9 @@ import { AdminPage } from './pages/AdminPage'
 import { CheckoutPage } from './pages/CheckoutPage'
 import { HomePage } from './pages/HomePage'
 import { MembershipPage } from './pages/MembershipPage'
-import { ToolboxPage } from './pages/ToolboxPage'
+import { QuotePage } from './pages/QuotePage'
+import { ExchangePage } from './pages/ExchangePage'
+import { WorldTimePage } from './pages/WorldTimePage'
 import { UnlockPage } from './pages/UnlockPage'
 import { WorldTimeBar } from './components/WorldTimeBar'
 
@@ -98,7 +100,10 @@ export function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/documents" element={<ProtectedFeature><DocumentCenterPage /></ProtectedFeature>} />
                 <Route path="/follow-up" element={<ProtectedFeature><FollowUpPage /></ProtectedFeature>} />
-                <Route path="/toolbox" element={<ProtectedFeature><ToolboxPage /></ProtectedFeature>} />
+                <Route path="/quote" element={<ProtectedFeature><QuotePage /></ProtectedFeature>} />
+                <Route path="/exchange" element={<ProtectedFeature><ExchangePage /></ProtectedFeature>} />
+                <Route path="/world" element={<ProtectedFeature><WorldTimePage /></ProtectedFeature>} />
+                <Route path="/toolbox" element={<Navigate to="/quote" replace />} />
                 <Route path="/membership" element={<MembershipPage />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/checkout/:plan" element={<CheckoutPage />} />

@@ -23,20 +23,20 @@ page.on('pageerror', (e) => console.log('PAGEERROR', e.message))
 await page.setRequestInterception(true)
 page.on('request', (req) => { if (req.url().includes('frankfurter')) req.abort(); else req.continue() })
 
-// ---- Test A: WorldTimeBar hidden on home, shown on /toolbox ----
+// ---- Test A: WorldTimeBar hidden on home, shown on /quote ----
 await page.goto(BASE + '/', { waitUntil: 'networkidle2' })
 await new Promise((r) => setTimeout(r, 400))
 const homeBar = await page.evaluate(() => document.querySelectorAll('[aria-label="选择显示的国家或地区时间"]').length)
 check('WorldTimeBar 设置按钮在首页不存在', homeBar === 0, `count=${homeBar}`)
 
-await page.goto(BASE + '/toolbox', { waitUntil: 'networkidle2' })
+await page.goto(BASE + '/quote', { waitUntil: 'networkidle2' })
 await page.waitForSelector('[aria-label="选择显示的国家或地区时间"]', { timeout: 15000 })
 await new Promise((r) => setTimeout(r, 600))
 const barInfo = await page.evaluate(() => {
   const body = document.body.innerText
   return { hasTokyoOrNy: body.includes('纽约') || body.includes('上海'), settingBtn: document.querySelectorAll('[aria-label="选择显示的国家或地区时间"]').length }
 })
-check('WorldTimeBar 出现在 /toolbox', barInfo.settingBtn === 1, `settingBtn=${barInfo.settingBtn}`)
+check('WorldTimeBar 出现在 /quote', barInfo.settingBtn === 1, `settingBtn=${barInfo.settingBtn}`)
 check('WorldTimeBar 默认显示城市时间', barInfo.hasTokyoOrNy, `textHasCity=${barInfo.hasTokyoOrNy}`)
 
 // ---- Test B: settings popover toggles + persists ----

@@ -2,7 +2,7 @@
 // 把「跟单助手」作为直达项放在「业务」分组，解决原先只能回首页下滑才能进入的问题。
 import { useEffect, type ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
-import { Box, CreditCard, FileText, Home, ShieldCheck, Users, Wrench, X } from 'lucide-react'
+import { ArrowLeftRight, Box, Calculator, CreditCard, FileText, Globe2, Home, ShieldCheck, Users, X } from 'lucide-react'
 import { useMembership } from '../features/membership/MembershipContext'
 import { adminApi } from '../features/membership/adminApi'
 import { getAdminToken, isBackendEnabled } from '../services/apiClient'
@@ -23,7 +23,14 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
       { to: '/follow-up', label: '跟单助手', icon: Users, badge: '新' },
     ],
   },
-  { label: '工具箱', items: [{ to: '/toolbox', label: '贸商工具箱', icon: Wrench }] },
+  {
+    label: '工具箱',
+    items: [
+      { to: '/quote', label: '报价助手', icon: Calculator },
+      { to: '/exchange', label: '汇率换算', icon: ArrowLeftRight },
+      { to: '/world', label: '世界时间', icon: Globe2 },
+    ],
+  },
   { label: '账户', items: [{ to: '/membership', label: '会员中心', icon: CreditCard }] },
 ]
 
