@@ -40,13 +40,13 @@ function AiProxyCard() {
           <h2 className="text-lg font-semibold">AI 识别代理设置</h2>
         </div>
         <p className="text-sm text-slate-500">
-          填入你部署的 AI 代理地址（含密钥，部署说明见项目 docs/AI代理部署指南.md）。设置后全站用户即可一键识别，无需各自配置 API。留空则使用构建时注入的默认值。
+          默认已指向本站同域 EdgeOne 函数 <code className="rounded bg-slate-100 px-1">/api/ai-proxy</code>（国内可达，前端零密钥）。站长只需在 EdgeOne 控制台为项目设置环境变量 <code className="rounded bg-slate-100 px-1">AI_PROVIDER_KEY</code> / <code className="rounded bg-slate-100 px-1">AI_PROVIDER_URL</code> / <code className="rounded bg-slate-100 px-1">AI_MODEL</code> 即可启用。如需自定义代理地址可在此填写并保存。
         </p>
       </CardHeader>
       <CardContent className="space-y-3">
         <label className="block text-sm font-medium">
           代理地址（Endpoint）
-          <Input value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="https://your-worker.your-subdomain.workers.dev" />
+          <Input value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="/api/ai-proxy（同域默认，国内可达）" />
         </label>
         {endpointMsg ? <p className="text-sm text-brand-700">{endpointMsg}</p> : null}
         <div className="flex flex-wrap gap-3">

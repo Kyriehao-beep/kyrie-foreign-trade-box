@@ -1,5 +1,6 @@
 import { Mail, Phone, MessageCircle, QrCode, Heart, ArrowRight, CheckCircle2, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { WECHAT_QR_BASE64, WECHAT_PAY_BASE64 } from '../assets/qrCodes'
 
 /* ── 联系信息（真实数据）──────────────────────────── */
 const CONTACT = {
@@ -109,7 +110,7 @@ export default function ContactPage() {
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 text-center shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">微信扫码加好友</p>
             <img
-              src="/wechat-qr.jpg"
+              src={WECHAT_QR_BASE64}
               alt="微信二维码 - Kyrie"
               className="mx-auto mt-3 h-56 w-56 rounded-lg object-contain"
             />
@@ -123,7 +124,7 @@ export default function ContactPage() {
               打赏支持（可选）
             </p>
             <img
-              src="/wechat-pay.jpg"
+              src={WECHAT_PAY_BASE64}
               alt="微信收款码 - Kyrie"
               className="mx-auto mt-3 h-56 w-56 rounded-lg object-contain"
             />

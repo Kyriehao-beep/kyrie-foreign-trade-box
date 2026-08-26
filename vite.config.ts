@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/kyrie-foreign-trade-box/',
+  base: '/',
   build: {
     outDir: 'dist/client',
   },

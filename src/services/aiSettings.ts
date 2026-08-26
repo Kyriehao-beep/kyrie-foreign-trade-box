@@ -14,16 +14,22 @@ function readEnvEndpoint(): string {
   try {
     const env = import.meta.env as Record<string, string | undefined>
     const value = env.VITE_AI_PROXY_ENDPOINT
-    return typeof value === 'string' ? value.trim() : ''
+    if (typeof value === 'string' && value.trim()) return value.trim()
   } catch {
-    return ''
+    /* ignore */
   }
+  // 默认走同域 EdgeOne 函数（国内可达、前端零密钥）
+  return '/api/ai-proxy'
 }
 
 export function getAiEndpoint(): string {
   try {
     const local = localStorage.getItem(STORAGE_KEY)
-    if (local && local.trim()) return local.trim()
+    if (local && local.trim()) {
+      // 迁移：旧版 workers.dev 代理在国内被墙，自动回退到同域默认
+      if (local.includes('workers.dev')) return readEnvEndpoint()
+      return local.trim()
+    }
   } catch {
     /* ignore */
   }
