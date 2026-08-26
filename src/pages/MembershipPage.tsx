@@ -27,7 +27,7 @@ export function MembershipPage() {
       <section className="mx-auto max-w-3xl text-center">
         <Badge>简单、透明、无次数收费</Badge>
         <h1 className="mt-5 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">先完整试用，再决定是否付费</h1>
-        <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600">72 小时内六类单据、AI 模拟填单和全部工具完整开放。到期后选择订阅或买断，不按生成次数计费。</p>
+        <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600">15 天内六类单据、AI 模拟填单和全部工具完整开放。到期后选择订阅或买断，不按生成次数计费。</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2"><Badge className="bg-white text-slate-700">当前状态：{phaseLabels[snapshot.entitlement.phase] ?? '未知'}</Badge>{snapshot.user ? <Badge className="bg-white text-slate-700">账号：{snapshot.user.username}</Badge> : null}</div>
       </section>
 

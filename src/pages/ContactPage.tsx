@@ -6,8 +6,7 @@ const CONTACT = {
   wechatName: 'Kyrie',
   wechatNote: '(**阳) · 中国香港',
   email: '821625826@qq.com',
-  // phone 留空则不显示电话区块；填上即自动渲染
-  phone: '',
+  phone: '13713149025',
 }
 
 export default function ContactPage() {

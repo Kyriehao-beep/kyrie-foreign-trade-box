@@ -1,5 +1,5 @@
 name = "ktb-ai-proxy"
-main = "worker/ai-proxy.js"
+main = "ai-proxy.js"
 compatibility_date = "2024-09-23"
 
 # 非密钥配置（可直接写在这里）
