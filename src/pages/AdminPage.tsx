@@ -68,9 +68,13 @@ function LocalAdmin() {
 
   function login(event: FormEvent) {
     event.preventDefault()
-    if (adminApi.login(pw)) {
+    const res = adminApi.login(pw)
+    if (res === 'ok') {
       setAuthed(true)
       setCodes(adminApi.listCodes())
+    } else if (res === 'locked') {
+      const min = Math.max(1, Math.ceil(adminApi.lockRemaining() / 60000))
+      setPwErr(`尝试次数过多，账户已临时锁定，请约 ${min} 分钟后再试`)
     } else {
       setPwErr('密码错误')
     }

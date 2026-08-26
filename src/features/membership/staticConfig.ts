@@ -1,9 +1,23 @@
 import type { PlanId, PlanSummary } from './types'
 
-// 改这里：管理密码数组（任一匹配即可登录 /admin，最多 3 个席位）
-export const ADMIN_PASSWORDS = ['wiz1', 'wiz2', 'wiz3']
+// 管理员登录 /admin 的口令。
+// 安全说明：纯前端无法真正保密，这里只做"源码混淆 + 暴力破解防护"，并非绝对安全。
+// - 默认口令仅存哈希（源码中无明文 wiz1/wiz2/wiz3）。
+// - 生产环境请通过构建变量 VITE_ADMIN_PASS 覆盖为你的强口令（多个用逗号分隔），
+//   重新 `npm run build` 注入即可；配置后默认口令不再生效。
 // 管理员会话存储键（会员逻辑据此判定管理员是否已拥有产品访问权）
 export const ADMIN_STORAGE_KEY = 'ktb_admin_v1'
+// 默认口令哈希（对应 wiz1 / wiz2 / wiz3）。仅为演示兜底，配置 VITE_ADMIN_PASS 后不使用。
+export const DEFAULT_ADMIN_PASSWORD_HASHES = [
+  'fc0c9dffe43d4322',
+  '2e7cc3d020420654',
+  '0c159043f66d44e2',
+]
+// 暴力破解防护：连续失败上限与锁定时长（毫秒）
+export const ADMIN_MAX_FAILS = 5
+export const ADMIN_LOCK_MS = 5 * 60 * 1000
+// 登录失败计数存储键
+export const ADMIN_LOCK_KEY = 'ktb_admin_lock_v1'
 // 改这里：解锁码密钥。注意：改了会让已发出的解锁码失效。
 export const UNLOCK_SECRET = 'ktb-unlock-secret-2026-change-me'
 // 改这里：你的微信号（付款后用户加你领码）
