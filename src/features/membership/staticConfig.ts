@@ -25,8 +25,8 @@ export const WECHAT_ID = 'kyrie_wx_demo'
 // 付款后给用户的提示文案
 export const CONTACT_TIP = '付款后加微信，备注「外贸盒子+方案」，领取解锁码'
 
-// 免费试用天数
-export const TRIAL_DAYS = 3
+// 免费试用天数（半个月）
+export const TRIAL_DAYS = 15
 
 // 会员方案（价格、时长）
 export const PLANS: PlanSummary[] = [

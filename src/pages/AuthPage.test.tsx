@@ -36,7 +36,7 @@ it('registers with a contact field and explains the server trial', async () => {
   await userEvent.click(screen.getByRole('button', { name: '注册并开始试用' }))
 
   expect(membershipApi.register).toHaveBeenCalledWith({ username: 'kyrie_user', password: 'password88', contact: 'wx-kyrie' })
-  expect(await screen.findByText('注册成功，72 小时完整试用已开启')).toBeInTheDocument()
+  expect(await screen.findByText('注册成功，15 天完整试用已开启')).toBeInTheDocument()
 })
 
 it('switches to login without asking for contact information', async () => {

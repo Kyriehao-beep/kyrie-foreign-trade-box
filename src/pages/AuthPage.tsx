@@ -30,7 +30,7 @@ export function AuthPage() {
     try {
       if (mode === 'register') {
         await register({ username, password, contact })
-        setMessage('注册成功，72 小时完整试用已开启')
+        setMessage('注册成功，15 天完整试用已开启')
       } else {
         await login({ username, password })
         setMessage('登录成功')
@@ -67,7 +67,7 @@ export function AuthPage() {
     <main className="mx-auto grid max-w-6xl gap-8 px-5 py-12 lg:grid-cols-[1fr_480px] lg:items-center lg:px-8 lg:py-20">
       <section>
         <span className="inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1.5 text-sm font-medium text-brand-700"><ShieldCheck aria-hidden="true" className="h-4 w-4" />试用与会员状态保存在当前设备</span>
-        <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">{mode === 'register' ? '创建账号，免费试用 72 小时' : '登录 Kyrie的外贸盒子'}</h1>
+        <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">{mode === 'register' ? '创建账号，免费试用 15 天' : '登录 Kyrie的外贸盒子'}</h1>
         <p className="mt-5 max-w-2xl leading-7 text-slate-600">试用期内六类外贸单据、AI 模拟填单、PDF 与 Excel 导出、贸商工具箱全部开放。单据和客户资料仍保存在当前设备。</p>
       </section>
 
