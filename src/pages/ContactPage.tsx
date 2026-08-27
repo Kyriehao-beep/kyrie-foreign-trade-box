@@ -137,7 +137,7 @@ export default function ContactPage() {
       <div className="mt-12 rounded-2xl bg-gradient-to-r from-brand-600 to-emerald-600 p-8 text-center text-white">
         <h2 className="text-xl font-bold">还没想好？先去试试工具箱</h2>
         <p className="mt-2 text-sm text-white/80">
-          15 天免费试用，6 类单据 + 跟单助手 + 报价计算 + 工具箱，全部打开浏览器就能用。
+          工具永久免费，6 类单据 + 跟单助手 + 报价计算 + 工具箱，全部打开浏览器就能用。
         </p>
         <Link
           to="/"

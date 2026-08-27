@@ -7,9 +7,9 @@ import { Reveal } from '../components/Reveal'
 import { DOCUMENT_TYPES } from '../domain/documents'
 
 const homePlans = [
-  { id: 'monthly', name: '体验包', amountCny: 9.9, suffix: '/30 天', note: '一杯奶茶钱，完整试用全部工具' },
-  { id: 'yearly', name: '年度会员', amountCny: 79, suffix: '/年', note: '平均每天不到 0.22 元，比按月省 40 元' },
-  { id: 'lifetime', name: '总包（终身）', amountCny: 199, suffix: '/永久', note: '一次付费，现有 + 未来新工具永久免费' },
+  { id: 'trial', name: '体验包', amountCny: 9.9, suffix: '/次', note: '1 份单据模板个性化，改成你公司抬头+术语' },
+  { id: 'standard', name: '标准包', amountCny: 99, suffix: '/套', note: '报价计算器 + 3–5 个核心工具组合 + 品牌定制' },
+  { id: 'full', name: '总包（私有定制）', amountCny: 199, suffix: '/面议', note: '从你业务痛点出发，定制一整套私有工具' },
 ]
 
 // 贸商工具矩阵 —— 后续新增工具只改这个数组即可（icon / 标题 / 描述 / 入口）
@@ -41,8 +41,8 @@ export function HomePage() {
             </div>
             <div className="mt-8 grid gap-2 text-sm text-slate-500">
               <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 shrink-0 text-brand-600" />单据内容仍在本地处理，不上传云端</span>
-              <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 shrink-0 text-ocean" />账号、会员状态与付款申请保存在服务器</span>
-              <span className="flex items-center gap-2"><FileSpreadsheet className="h-4 w-4 shrink-0 text-brand-600" />支持 PDF 与 Excel · 15 天完整试用</span>
+              <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 shrink-0 text-ocean" />无需注册，打开浏览器就能用</span>
+              <span className="flex items-center gap-2"><FileSpreadsheet className="h-4 w-4 shrink-0 text-brand-600" />支持 PDF 与 Excel · 永久免费使用</span>
             </div>
           </div>
           <div className="relative mx-auto w-full max-w-xl">
@@ -51,7 +51,7 @@ export function HomePage() {
               <Card className="overflow-hidden p-3 shadow-[0_30px_80px_rgba(15,55,50,0.15)]">
                 <div className="rounded-xl bg-ink p-5 text-white">
                   <div className="flex items-center justify-between"><span className="text-sm font-semibold">今日工作台</span><span className="rounded-full bg-white/10 px-2 py-1 text-xs">已自动保存</span></div>
-                  <div className="mt-8 grid grid-cols-3 gap-3">{[['6','外贸单据'],['5','贸商工具'],['15天','完整试用']].map(([value, label]) => <div key={label} className="rounded-xl bg-white/8 p-3"><p className="text-2xl font-semibold">{value}</p><p className="mt-1 text-xs text-white/60">{label}</p></div>)}</div>
+                  <div className="mt-8 grid grid-cols-3 gap-3">{[['6','外贸单据'],['5','贸商工具'],['永久','免费使用']].map(([value, label]) => <div key={label} className="rounded-xl bg-white/8 p-3"><p className="text-2xl font-semibold">{value}</p><p className="mt-1 text-xs text-white/60">{label}</p></div>)}</div>
                 </div>
                 <div className="grid gap-3 p-4 sm:grid-cols-2">{DOCUMENT_TYPES.slice(0, 4).map((item, index) => <div key={item.code} className="rounded-xl border border-slate-200 p-4 transition-colors hover:border-brand-200"><div className="flex items-center justify-between"><span className="grid h-8 w-8 place-items-center rounded-lg bg-brand-50 text-xs font-bold text-brand-700">{item.code}</span><span className="text-xs text-slate-400">{index + 1}/6</span></div><p className="mt-4 font-semibold">{item.name}</p><p className="mt-1 text-xs leading-5 text-slate-500">{item.description}</p></div>)}</div>
               </Card>
@@ -157,11 +157,11 @@ export function HomePage() {
           <Reveal>
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <div>
-                <p className="text-sm font-semibold text-brand-600">价格方案</p>
-                <h2 className="mt-2 text-3xl font-semibold tracking-tight">按需订阅，工具持续上新</h2>
-                <p className="mt-3 max-w-2xl text-slate-600">15 天完整试用，满意再开通。订阅即解锁全部现有工具，并已包含后续上线的新工具——一次付费，长期增值。</p>
+                <p className="text-sm font-semibold text-brand-600">服务方案</p>
+                <h2 className="mt-2 text-3xl font-semibold tracking-tight">需要专属工具？按需求定制</h2>
+                <p className="mt-3 max-w-2xl text-slate-600">工具箱本身永久免费、打开即用。如果现有工具还差你那一步，选个服务包，我帮你把痛点做成私有小工具。</p>
               </div>
-              <Button asChild variant="ghost"><Link to="/membership">查看会员中心<ArrowRight className="h-4 w-4" /></Link></Button>
+              <Button asChild variant="ghost"><Link to="/about">查看定制服务<ArrowRight className="h-4 w-4" /></Link></Button>
             </div>
           </Reveal>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -176,13 +176,13 @@ export function HomePage() {
                   <CardContent>
                     <p><span className="text-4xl font-semibold tracking-tight">¥{plan.amountCny}</span><span className="ml-1 text-sm text-slate-500">{plan.suffix}</span></p>
                     <ul className="mt-6 space-y-3 text-sm text-slate-600">{['六类外贸单据', '跟单助手（优先级/时间线/业务剧本）', 'PDF 与 Excel 导出', '贸商工具箱及后续新工具'].map((item) => <li key={item} className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-brand-600" />{item}</li>)}</ul>
-                    <Button asChild className="mt-7 w-full"><Link to="/membership">选择{plan.name}</Link></Button>
+                    <Button asChild className="mt-7 w-full"><Link to="/about">了解{plan.name}</Link></Button>
                   </CardContent>
                 </Card>
               </Reveal>
             ))}
           </div>
-          <p className="mt-6 text-center text-sm text-slate-500">付款由管理员人工核对开通，无需绑定银行卡或自动扣费。个人外贸人与小团队均可轻松负担。</p>
+          <p className="mt-6 text-center text-sm text-slate-500">定制服务按需沟通，微信确认后开工，不满意可协商。个人外贸人与小团队都能轻松起步。</p>
         </div>
       </section>
 
@@ -191,7 +191,7 @@ export function HomePage() {
         <div className="animate-drift pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
         <div className="relative mx-auto max-w-7xl px-5 py-16 text-center lg:px-8">
           <h2 className="text-3xl font-semibold tracking-tight text-white">把外贸生意里的琐碎，交给一个工作台</h2>
-          <p className="mx-auto mt-3 max-w-xl text-white/80">15 天完整试用，不绑卡、不自动扣费。今天就开始，把时间留给真正的成交。</p>
+          <p className="mx-auto mt-3 max-w-xl text-white/80">工具永久免费，不绑卡、不自动扣费。今天就开始，把时间留给真正的成交。</p>
           <div className="mt-7 flex justify-center">
             <Button asChild size="lg" variant="secondary"><Link to="/documents">免费开始制作单据<ArrowRight className="h-4 w-4" /></Link></Button>
           </div>

@@ -5,29 +5,29 @@ import { Link } from 'react-router-dom'
 const SERVICES = [
   {
     num: '01',
-    price: '99',
+    price: '9.9',
     unit: '/次',
     icon: <Wrench className="h-5 w-5" />,
-    title: '外贸单据模板定制',
-    desc: '把你公司实际在用的单据格式做成电子模板——报价单、PI、发票、装箱单、合同，一次制作，长期复用。告别每次手动调格式的痛苦。',
+    title: '体验包 · 单据模板个性化',
+    desc: '把 1 份现成单据模板（报价单 / PI / 发票等）改成你公司抬头与术语，交付可下载定制版。先花一杯奶茶钱试试水。',
     badge: '最热门',
   },
   {
     num: '02',
-    price: '199',
+    price: '99',
     unit: '/套',
     icon: <TrendingUp className="h-5 w-5" />,
-    title: '报价与利润模型搭建',
-    desc: '针对你的产品线和目标市场，搭建专属报价计算器——成本结构、利润率、退税、汇损全部预设好，输入数量和汇率直接出报价，不再每次手算。',
+    title: '标准包 · 报价与工具组合',
+    desc: '针对你的产品线和目标市场，搭建专属报价计算器（成本 / 利润 / 退税 / 汇损预设），并组合 3–5 个核心工具 + 你的品牌定制。',
     badge: '效率翻倍',
   },
   {
     num: '03',
-    price: '面议',
-    unit: '',
+    price: '199',
+    unit: '/面议',
     icon: <Rocket className="h-5 w-5" />,
-    title: '企业私有工具定制',
-    desc: '把你们团队内部重复最多、最耗时的那个流程，做成专用小工具。报价计算、跟单管理、库存联动、客户档案……浏览器打开即用，无需安装，团队共享。',
+    title: '总包 · 企业私有工具',
+    desc: '把你们团队最耗时的流程做成专用小工具（报价 / 跟单 / 库存 / 客户档案），浏览器打开即用、团队共享，交付源码 + 培训。',
     badge: '按需定制',
   },
   {
@@ -36,7 +36,7 @@ const SERVICES = [
     unit: '',
     icon: <Globe className="h-5 w-5" />,
     title: '工具箱使用咨询',
-    desc: '已上线的全部功能（单据 / 跟单 / 报价 / 汇率 / 时间），有任何问题或新功能建议，随时聊。能做的马上做，不藏着掖着。',
+    desc: '已上线全部功能（单据 / 跟单 / 报价 / 汇率 / 时间）有任何问题或新功能建议，随时聊。能做的马上做，不藏着掖着。',
     badge: '随时欢迎',
   },
 ]
@@ -110,7 +110,7 @@ export default function AboutPage() {
           <p className="mt-5 leading-relaxed text-slate-600">
             这个工具箱就是我把自己踩过的坑、写过的模板、总结的流程，
             全部做成了<strong>打开浏览器就能用</strong>的小工具。
-            数据存你自己设备上，<strong>15 天免费试用</strong>，不绑卡、不自动扣费。
+            数据存你自己设备上，<strong>工具永久免费</strong>，不绑卡、不自动扣费。
           </p>
 
           {/* CTA 组 */}
@@ -120,7 +120,7 @@ export default function AboutPage() {
               className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-brand-700"
             >
               <Zap className="h-4 w-4" />
-              免费试用 15 天
+              免费使用工具箱
             </Link>
             <Link
               to="/contact"
@@ -230,8 +230,8 @@ export default function AboutPage() {
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-xl">⚡</div>
-          <h3 className="mt-3 font-semibold text-slate-900">先试用再决定</h3>
-          <p className="mt-1 text-sm text-slate-500">15 天完整试用，所有功能开放，满意再考虑付费。</p>
+          <h3 className="mt-3 font-semibold text-slate-900">免费直接用</h3>
+          <p className="mt-1 text-sm text-slate-500">工具永久免费，所有功能开放，满意再考虑定制服务。</p>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-xl">🤝</div>
