@@ -20,19 +20,19 @@ export const ADMIN_LOCK_MS = 5 * 60 * 1000
 export const ADMIN_LOCK_KEY = 'ktb_admin_lock_v1'
 // 改这里：解锁码密钥。注意：改了会让已发出的解锁码失效。
 export const UNLOCK_SECRET = 'ktb-unlock-secret-2026-change-me'
-// 改这里：你的微信号（付款后用户加你领码）
-export const WECHAT_ID = 'kyrie_wx_demo'
+// 改这里：你的微信号（付款后用户加你领码）——请确认这是可搜索的真实微信号
+export const WECHAT_ID = 'Kyrie'
 // 付款后给用户的提示文案
 export const CONTACT_TIP = '付款后加微信，备注「外贸盒子+方案」，领取解锁码'
 
-// 免费试用天数（半个月）
-export const TRIAL_DAYS = 15
+// 免费试用天数（一个月）
+export const TRIAL_DAYS = 30
 
 // 会员方案（价格、时长）
 export const PLANS: PlanSummary[] = [
-  { id: 'monthly', name: '体验包', amountCny: 9.9, durationDays: 30, suffix: '/30 天', note: '一杯奶茶钱，完整试用全部工具' },
-  { id: 'yearly', name: '年度会员', amountCny: 79, durationDays: 365, suffix: '/年', note: '平均每天不到 0.22 元，比按月省 40 元' },
-  { id: 'lifetime', name: '总包（终身）', amountCny: 199, durationDays: null, suffix: '/永久', note: '一次付费，现有工具 + 未来所有新工具永久免费' },
+  { id: 'monthly', name: '月度会员', amountCny: 9.9, durationDays: 30, suffix: '/月', note: '完整使用全部工具，随时可取消' },
+  { id: 'yearly', name: '年度会员', amountCny: 99, durationDays: 365, suffix: '/年', note: '比月付省约 ¥20，平均每天不到 0.3 元' },
+  { id: 'lifetime', name: '买断（永久）', amountCny: 199, durationDays: null, suffix: '/永久', note: '一次付费，现有 + 未来所有工具永久免费' },
 ]
 
 export function planName(id: PlanId): string {

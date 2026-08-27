@@ -1,4 +1,4 @@
-import { ArrowLeftRight, ArrowRight, Calculator, Check, FileSpreadsheet, Globe2, Layers, ShieldCheck, Sparkles, Users } from 'lucide-react'
+import { ArrowLeftRight, ArrowRight, Calculator, Check, FileSpreadsheet, Globe2, Layers, Rocket, ShieldCheck, Sparkles, TrendingUp, Users } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Badge } from '../components/ui/badge'
 import { Button } from '../components/ui/button'
@@ -7,9 +7,9 @@ import { Reveal } from '../components/Reveal'
 import { DOCUMENT_TYPES } from '../domain/documents'
 
 const homePlans = [
-  { id: 'trial', name: '体验包', amountCny: 9.9, suffix: '/次', note: '1 份单据模板个性化，改成你公司抬头+术语' },
-  { id: 'standard', name: '标准包', amountCny: 99, suffix: '/套', note: '报价计算器 + 3–5 个核心工具组合 + 品牌定制' },
-  { id: 'full', name: '总包（私有定制）', amountCny: 199, suffix: '/面议', note: '从你业务痛点出发，定制一整套私有工具' },
+  { id: 'monthly', name: '月度会员', amountCny: 9.9, suffix: '/月', note: '完整使用全部工具，随时可取消', highlight: false },
+  { id: 'yearly', name: '年度会员', amountCny: 99, suffix: '/年', note: '比月付省约 ¥20，平均每天不到 0.3 元', highlight: true },
+  { id: 'lifetime', name: '买断（永久）', amountCny: 199, suffix: '/永久', note: '一次付费，现有 + 未来所有工具永久免费', highlight: false },
 ]
 
 // 贸商工具矩阵 —— 后续新增工具只改这个数组即可（icon / 标题 / 描述 / 入口）
@@ -42,7 +42,7 @@ export function HomePage() {
             <div className="mt-8 grid gap-2 text-sm text-slate-500">
               <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 shrink-0 text-brand-600" />单据内容仍在本地处理，不上传云端</span>
               <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 shrink-0 text-ocean" />无需注册，打开浏览器就能用</span>
-              <span className="flex items-center gap-2"><FileSpreadsheet className="h-4 w-4 shrink-0 text-brand-600" />支持 PDF 与 Excel · 永久免费使用</span>
+              <span className="flex items-center gap-2"><FileSpreadsheet className="h-4 w-4 shrink-0 text-brand-600" />支持 PDF 与 Excel · 免费试用 1 个月，之后 ¥9.9/月</span>
             </div>
           </div>
           <div className="relative mx-auto w-full max-w-xl">
@@ -149,7 +149,7 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ───────────── 会员 / 价格 ───────────── */}
+      {/* ───────────── 会员方案 ───────────── */}
       <section className="relative overflow-hidden bg-paper">
         <div className="absolute inset-0 bg-dots opacity-40" />
         <div className="animate-drift pointer-events-none absolute -left-20 top-0 h-64 w-64 rounded-full bg-brand-500/10 blur-3xl" />
@@ -157,18 +157,18 @@ export function HomePage() {
           <Reveal>
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <div>
-                <p className="text-sm font-semibold text-brand-600">服务方案</p>
-                <h2 className="mt-2 text-3xl font-semibold tracking-tight">需要专属工具？按需求定制</h2>
-                <p className="mt-3 max-w-2xl text-slate-600">工具箱本身永久免费、打开即用。如果现有工具还差你那一步，选个服务包，我帮你把痛点做成私有小工具。</p>
+                <p className="text-sm font-semibold text-brand-600">会员方案</p>
+                <h2 className="mt-2 text-3xl font-semibold tracking-tight">先用 1 个月，再决定订阅</h2>
+                <p className="mt-3 max-w-2xl text-slate-600">新用户免费试用 30 天，六类单据、跟单助手和全部工具完整开放。到期后按月 ¥9.9、按年 ¥99，或一次买断 ¥199 永久使用——不按生成次数计费。</p>
               </div>
-              <Button asChild variant="ghost"><Link to="/about">查看定制服务<ArrowRight className="h-4 w-4" /></Link></Button>
+              <Button asChild variant="ghost"><Link to="/about">了解企业定制<ArrowRight className="h-4 w-4" /></Link></Button>
             </div>
           </Reveal>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {homePlans.map((plan, i) => (
               <Reveal key={plan.id} delay={i * 70}>
-                <Card className={`h-full bg-white ${plan.id === 'yearly' ? 'relative border-brand-500 ring-2 ring-brand-100' : ''}`}>
-                  {plan.id === 'yearly' ? <Badge className="absolute -top-3 left-5 bg-brand-600 text-white">更适合长期使用</Badge> : null}
+                <Card className={`h-full bg-white ${plan.highlight ? 'relative border-brand-500 ring-2 ring-brand-100' : ''}`}>
+                  {plan.highlight ? <Badge className="absolute -top-3 left-5 bg-brand-600 text-white">更划算</Badge> : null}
                   <CardHeader>
                     <div className="flex items-center justify-between"><h3 className="text-xl font-semibold">{plan.name}</h3></div>
                     <p className="mt-2 text-sm text-slate-500">{plan.note}</p>
@@ -176,13 +176,47 @@ export function HomePage() {
                   <CardContent>
                     <p><span className="text-4xl font-semibold tracking-tight">¥{plan.amountCny}</span><span className="ml-1 text-sm text-slate-500">{plan.suffix}</span></p>
                     <ul className="mt-6 space-y-3 text-sm text-slate-600">{['六类外贸单据', '跟单助手（优先级/时间线/业务剧本）', 'PDF 与 Excel 导出', '贸商工具箱及后续新工具'].map((item) => <li key={item} className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-brand-600" />{item}</li>)}</ul>
-                    <Button asChild className="mt-7 w-full"><Link to="/about">了解{plan.name}</Link></Button>
+                    <Button asChild className="mt-7 w-full"><Link to="/membership">了解{plan.name}</Link></Button>
                   </CardContent>
                 </Card>
               </Reveal>
             ))}
           </div>
-          <p className="mt-6 text-center text-sm text-slate-500">定制服务按需沟通，微信确认后开工，不满意可协商。个人外贸人与小团队都能轻松起步。</p>
+          <p className="mt-6 text-center text-sm text-slate-500">订阅按月 / 年 / 买断任选；也支持为你的企业私人定制工具工作台，微信确认后开工。</p>
+        </div>
+      </section>
+
+      {/* ───────────── 企业定制 · 降本增效 ───────────── */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-ink to-brand-800 text-white">
+        <div className="animate-drift pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-emerald-400/10 blur-3xl" />
+        <div className="animate-drift-2 pointer-events-none absolute -bottom-20 -left-16 h-72 w-72 rounded-full bg-sky-400/10 blur-3xl" />
+        <div className="relative mx-auto max-w-7xl px-5 py-20 lg:px-8">
+          <Reveal>
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-sm font-semibold text-emerald-200"><TrendingUp className="h-4 w-4" />为中小企业私人定制</span>
+              <h2 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">帮你的团队，定制一套专属工具工作台</h2>
+              <p className="mt-4 text-lg leading-8 text-white/75">降本增效，从把每天最重复的活交给工具开始。让员工专注成交，帮老板省人、省时、省成本——一个浏览器打开即用的私有小工具，比你想象中更近。</p>
+            </div>
+          </Reveal>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { icon: Users, title: '省人省时', text: '报价、制单、跟单、汇率换算自动化，一个人顶两个人，老板不用再盯每道工序。' },
+              { icon: Layers, title: '流程私有化', text: '按你们真实的报价模型、单据格式、客户档案定制，数据留在本司设备，不依赖外部 SaaS。' },
+              { icon: Rocket, title: '按需定制', text: '不卖大系统，只解决你最头疼的那一个环节。小步快跑，交付即用，后续还能迭代。' },
+            ].map(({ icon: Icon, title, text }) => (
+              <Reveal key={title}>
+                <div className="h-full rounded-2xl border border-white/10 bg-white/5 p-6 transition-colors duration-300 hover:border-white/20 hover:bg-white/10">
+                  <Icon className="h-7 w-7 text-emerald-300" />
+                  <h3 className="mt-5 text-xl font-semibold">{title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-white/70">{text}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <Button asChild size="lg" variant="secondary"><Link to="/about">看看能帮你定制什么<ArrowRight className="h-4 w-4" /></Link></Button>
+            <Button asChild size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10"><Link to="/contact">加微信聊需求</Link></Button>
+          </div>
         </div>
       </section>
 
@@ -191,9 +225,9 @@ export function HomePage() {
         <div className="animate-drift pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
         <div className="relative mx-auto max-w-7xl px-5 py-16 text-center lg:px-8">
           <h2 className="text-3xl font-semibold tracking-tight text-white">把外贸生意里的琐碎，交给一个工作台</h2>
-          <p className="mx-auto mt-3 max-w-xl text-white/80">工具永久免费，不绑卡、不自动扣费。今天就开始，把时间留给真正的成交。</p>
+          <p className="mx-auto mt-3 max-w-xl text-white/80">免费试用 1 个月，之后 ¥9.9/月订阅，不绑卡、不自动扣费。今天就开始，把时间留给真正的成交。</p>
           <div className="mt-7 flex justify-center">
-            <Button asChild size="lg" variant="secondary"><Link to="/documents">免费开始制作单据<ArrowRight className="h-4 w-4" /></Link></Button>
+            <Button asChild size="lg" variant="secondary"><Link to="/documents">免费试用制作单据<ArrowRight className="h-4 w-4" /></Link></Button>
           </div>
         </div>
       </section>

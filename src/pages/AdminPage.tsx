@@ -100,7 +100,7 @@ function LocalAdmin() {
         <CardContent className="text-sm text-slate-600">
           <p>微信：<span className="font-semibold text-ink">{WECHAT_ID}</span></p>
           <p className="mt-1">{CONTACT_TIP}</p>
-          <p className="mt-1 text-slate-400">收款码图片请放到项目 public/pay/wechat.png 与 alipay.png 后重新部署。</p>
+          <p className="mt-1 text-slate-400">结账页收款码已在 src/assets/qrCodes.ts 以 base64 内嵌（微信收款码），无需 public/pay 图片；支付宝暂引导微信确认。</p>
         </CardContent>
       </Card>
 

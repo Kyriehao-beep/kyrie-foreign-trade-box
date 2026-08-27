@@ -1,34 +1,34 @@
 import { MessageCircle, Wrench, Globe, Rocket, Heart, CheckCircle2, ArrowRight, Sparkles, TrendingUp, Clock, Zap } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
-/* ── 定制服务项（销售导向定价卡）────────────────── */
+/* ── 企业定制服务项（降本增效，销售导向）──────────── */
 const SERVICES = [
   {
     num: '01',
-    price: '9.9',
-    unit: '/次',
+    price: '¥99',
+    unit: '起',
     icon: <Wrench className="h-5 w-5" />,
-    title: '体验包 · 单据模板个性化',
-    desc: '把 1 份现成单据模板（报价单 / PI / 发票等）改成你公司抬头与术语，交付可下载定制版。先花一杯奶茶钱试试水。',
+    title: '单据 / 流程定制',
+    desc: '把你的报价模型、单据格式、客户档案做成专属小工具，浏览器打开即用，交付源码。',
     badge: '最热门',
   },
   {
     num: '02',
-    price: '99',
-    unit: '/套',
+    price: '¥199',
+    unit: '起',
     icon: <TrendingUp className="h-5 w-5" />,
-    title: '标准包 · 报价与工具组合',
-    desc: '针对你的产品线和目标市场，搭建专属报价计算器（成本 / 利润 / 退税 / 汇损预设），并组合 3–5 个核心工具 + 你的品牌定制。',
-    badge: '效率翻倍',
+    title: '企业私有工具工作台',
+    desc: '一整套私有工具（报价 / 跟单 / 库存 / 客户档案），团队共享，数据留本司设备，不依赖外部 SaaS。',
+    badge: '降本增效',
   },
   {
     num: '03',
-    price: '199',
-    unit: '/面议',
+    price: '面议',
+    unit: '',
     icon: <Rocket className="h-5 w-5" />,
-    title: '总包 · 企业私有工具',
-    desc: '把你们团队最耗时的流程做成专用小工具（报价 / 跟单 / 库存 / 客户档案），浏览器打开即用、团队共享，交付源码 + 培训。',
-    badge: '按需定制',
+    title: '企业数字化顾问',
+    desc: '先聊你最头疼的环节，给落地方案与报价。小步快跑、交付即用，后续还能迭代。',
+    badge: '按需',
   },
   {
     num: '04',
@@ -110,7 +110,7 @@ export default function AboutPage() {
           <p className="mt-5 leading-relaxed text-slate-600">
             这个工具箱就是我把自己踩过的坑、写过的模板、总结的流程，
             全部做成了<strong>打开浏览器就能用</strong>的小工具。
-            数据存你自己设备上，<strong>工具永久免费</strong>，不绑卡、不自动扣费。
+            数据存你自己设备上，<strong>免费试用 1 个月，之后 ¥9.9/月订阅</strong>，不绑卡、不自动扣费。
           </p>
 
           {/* CTA 组 */}
@@ -173,14 +173,14 @@ export default function AboutPage() {
         <div className="text-center">
           <span className="inline-block rounded-full bg-amber-50 px-4 py-1 text-sm font-semibold text-amber-700">
             <Rocket className="mr-1 inline h-4 w-4" />
-            定制服务
+            企业定制 · 降本增效
           </span>
           <h2 className="mt-3 text-2xl font-bold text-slate-900">
-            工具箱满足不了？我来帮你量身做
+            企业想要专属工具？我帮你量身定制
           </h2>
           <p className="mx-auto mt-2 max-w-xl text-slate-600">
-            每个外贸团队都有自己的"特殊流程"。告诉我你最头疼的那个环节，
-            我把它做成专用工具——不搞大系统，就解决那一个问题。
+            帮老板把每天最重复的活交给工具——省人、省时、省成本。
+            告诉我你最头疼的那个环节，我把它做成专用工具，不搞大系统，就解决那一个问题。
           </p>
         </div>
 
@@ -230,8 +230,8 @@ export default function AboutPage() {
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-xl">⚡</div>
-          <h3 className="mt-3 font-semibold text-slate-900">免费直接用</h3>
-          <p className="mt-1 text-sm text-slate-500">工具永久免费，所有功能开放，满意再考虑定制服务。</p>
+          <h3 className="mt-3 font-semibold text-slate-900">先免费试用 1 个月</h3>
+          <p className="mt-1 text-sm text-slate-500">免费试用 1 个月，所有功能开放，满意再考虑订阅或定制。</p>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-xl">🤝</div>

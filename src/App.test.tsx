@@ -15,5 +15,5 @@ it('renders the Chinese product navigation', async () => {
   expect(screen.getByRole('link', { name: '外贸单据中心' })).toBeInTheDocument()
   expect(screen.getByRole('link', { name: '贸商工具箱' })).toBeInTheDocument()
   expect(screen.getByRole('link', { name: '会员中心' })).toBeInTheDocument()
-  await screen.findByText('登录后可开启 15 天完整试用')
+  await screen.findByText('登录后可开启 30 天完整试用')
 })

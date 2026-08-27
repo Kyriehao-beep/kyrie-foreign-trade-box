@@ -12,7 +12,7 @@ const baseEntitlement = { plan: null, expiresAt: null, trialEndsAt: null }
 
 it('asks anonymous visitors to register instead of showing an expired paywall', async () => {
   render(<MemoryRouter><MembershipProvider api={api({ user: null, entitlement: { ...baseEntitlement, phase: 'anonymous', hasAccess: false } })}><ProtectedFeature><p>私密工具</p></ProtectedFeature></MembershipProvider></MemoryRouter>)
-  expect(await screen.findByRole('heading', { name: '登录后开启 15 天完整试用' })).toBeInTheDocument()
+  expect(await screen.findByRole('heading', { name: '登录后开启 30 天完整试用' })).toBeInTheDocument()
   expect(screen.queryByText('私密工具')).not.toBeInTheDocument()
 })
 

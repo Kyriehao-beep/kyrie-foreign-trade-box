@@ -5,6 +5,7 @@ import { Button } from '../components/ui/button'
 import { Card, CardContent, CardHeader } from '../components/ui/card'
 import { useMembership } from '../features/membership/MembershipContext'
 import { PLANS, WECHAT_ID, CONTACT_TIP } from '../features/membership/staticConfig'
+import { WECHAT_PAY_BASE64 } from '../assets/qrCodes'
 import type { PlanId } from '../features/membership/types'
 
 const validPlans = new Set<PlanId>(['monthly', 'yearly', 'lifetime'])
@@ -15,7 +16,6 @@ export function CheckoutPage() {
   const { snapshot } = useMembership()
   const selected = PLANS.find((p) => p.id === planId) ?? null
   const [method, setMethod] = useState<'wechat' | 'alipay'>('wechat')
-  const [imgError, setImgError] = useState(false)
 
   if (!validPlans.has(planId) || !selected) return <Navigate to="/membership" replace />
 
@@ -40,24 +40,23 @@ export function CheckoutPage() {
         </CardHeader>
         <CardContent>
           <div className="mb-5 flex gap-2">
-            <Button type="button" variant={method === 'wechat' ? 'default' : 'outline'} onClick={() => { setMethod('wechat'); setImgError(false) }}>
+            <Button type="button" variant={method === 'wechat' ? 'default' : 'outline'} onClick={() => setMethod('wechat')}>
               微信支付
             </Button>
-            <Button type="button" variant={method === 'alipay' ? 'default' : 'outline'} onClick={() => { setMethod('alipay'); setImgError(false) }}>
+            <Button type="button" variant={method === 'alipay' ? 'default' : 'outline'} onClick={() => setMethod('alipay')}>
               支付宝
             </Button>
           </div>
-          {imgError ? (
-            <div className="mx-auto mb-4 w-full max-w-xs rounded-2xl border border-dashed border-slate-300 p-6 text-center text-sm text-slate-500">
-              收款码图片待上传。<br />请微信联系：<span className="font-semibold text-ink">{WECHAT_ID}</span>
-            </div>
-          ) : (
+          {method === 'wechat' ? (
             <img
               className="mx-auto mb-4 aspect-square w-full max-w-xs rounded-2xl border border-slate-200 object-contain"
-              src={`${import.meta.env.BASE_URL}pay/${method}.png`}
-              alt={method === 'wechat' ? '微信收款码' : '支付宝收款码'}
-              onError={() => setImgError(true)}
+              src={WECHAT_PAY_BASE64}
+              alt="微信收款码"
             />
+          ) : (
+            <div className="mx-auto mb-4 w-full max-w-xs rounded-2xl border border-dashed border-slate-300 p-6 text-center text-sm text-slate-500">
+              暂仅支持微信收款。请切换「微信支付」扫码，或加微信 <span className="font-semibold text-ink">{WECHAT_ID}</span> 确认支付宝付款。
+            </div>
           )}
           <p className="text-center text-sm text-slate-600">{CONTACT_TIP}</p>
         </CardContent>

@@ -1,9 +1,10 @@
-import { Box, Menu, ShieldCheck } from 'lucide-react'
+import { Box, Menu, ShieldCheck, Sparkles } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { Link, NavLink, Navigate, Route, Routes } from 'react-router-dom'
 import { Button } from './components/ui/button'
 import { Sidebar } from './components/Sidebar'
 import { MembershipProvider, useMembership } from './features/membership/MembershipContext'
+import { WECHAT_ID } from './features/membership/staticConfig'
 import { isBackendEnabled } from './services/apiClient'
 import { DocumentCenterPage } from './pages/DocumentCenterPage'
 import { FollowUpPage } from './pages/FollowUpPage'
@@ -55,8 +56,47 @@ function AppHeader({ onMenu }: { onMenu: () => void }) {
 }
 
 export function ProtectedFeature({ children }: { children: ReactNode }) {
-  // 工具箱已转型为免费展示/获客工具，所有功能直接开放，不再做会员墙拦截。
-  return children
+  const { snapshot, loading } = useMembership()
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-3xl px-5 py-20 text-center text-sm text-slate-500 print:hidden">
+        正在验证会员状态……
+      </div>
+    )
+  }
+  const { entitlement } = snapshot
+  if (entitlement.hasAccess) return children
+  if (entitlement.phase === 'unavailable') {
+    return <FeatureGate title="暂时无法验证会员状态" desc="请检查网络后刷新页面重试。" />
+  }
+  const expired = entitlement.phase === 'expired'
+  return (
+    <FeatureGate
+      title={expired ? '免费试用已结束' : '登录后开启 30 天完整试用'}
+      desc={expired
+        ? '订阅后可继续使用全部工具：¥9.9/月、¥99/年，或一次买断 ¥199 永久使用。'
+        : '注册登录即送 30 天完整试用，六类单据、跟单助手与全部工具开放。'}
+    />
+  )
+}
+
+function FeatureGate({ title, desc }: { title: string; desc: string }) {
+  return (
+    <main className="mx-auto max-w-2xl px-5 py-16 text-center print:hidden">
+      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-soft">
+        <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-600">
+          <Sparkles className="h-6 w-6" aria-hidden="true" />
+        </span>
+        <h2 className="mt-5 text-2xl font-semibold tracking-tight text-ink">{title}</h2>
+        <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-slate-600">{desc}</p>
+        <div className="mt-7 flex flex-wrap justify-center gap-3">
+          <Button asChild size="lg"><Link to="/membership">查看会员方案</Link></Button>
+          <Button asChild size="lg" variant="outline"><Link to="/auth">登录 / 注册</Link></Button>
+        </div>
+        <p className="mt-5 text-xs text-slate-400">付款后加微信 {WECHAT_ID} 领取解锁码，或登录后由站长直接开通。</p>
+      </div>
+    </main>
+  )
 }
 
 export function App() {

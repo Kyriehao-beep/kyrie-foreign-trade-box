@@ -8,9 +8,9 @@ import { useMembership } from '../features/membership/MembershipContext'
 import type { PlanSummary } from '../features/membership/types'
 
 const fallbackPlans: PlanSummary[] = [
-  { id: 'monthly', name: '体验包', amountCny: 9.9, durationDays: 30, suffix: '/30 天', note: '一杯奶茶钱，完整试用全部工具' },
-  { id: 'yearly', name: '年度会员', amountCny: 79, durationDays: 365, suffix: '/年', note: '平均每天不到 0.22 元，比按月省 40 元' },
-  { id: 'lifetime', name: '总包（终身）', amountCny: 199, durationDays: null, suffix: '/永久', note: '一次付费，现有工具 + 未来所有新工具永久免费' },
+  { id: 'monthly', name: '月度会员', amountCny: 9.9, durationDays: 30, suffix: '/月', note: '完整使用全部工具，随时可取消' },
+  { id: 'yearly', name: '年度会员', amountCny: 99, durationDays: 365, suffix: '/年', note: '比月付省约 ¥20，平均每天不到 0.3 元' },
+  { id: 'lifetime', name: '买断（永久）', amountCny: 199, durationDays: null, suffix: '/永久', note: '一次付费，现有 + 未来所有工具永久免费' },
 ]
 
 const phaseLabels: Record<string, string> = {
@@ -27,7 +27,7 @@ export function MembershipPage() {
       <section className="mx-auto max-w-3xl text-center">
         <Badge>简单、透明、无次数收费</Badge>
         <h1 className="mt-5 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">先完整试用，再决定是否付费</h1>
-        <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600">15 天内六类单据、跟单助手和全部工具完整开放。到期后选择订阅或买断，不按生成次数计费。</p>
+        <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600">新用户免费试用 30 天，六类单据、跟单助手和全部工具完整开放。到期后选择订阅或买断，不按生成次数计费。</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2"><Badge className="bg-white text-slate-700">当前状态：{phaseLabels[snapshot.entitlement.phase] ?? '未知'}</Badge>{snapshot.user ? <Badge className="bg-white text-slate-700">账号：{snapshot.user.username}</Badge> : null}</div>
       </section>
 
