@@ -110,7 +110,7 @@ export default function AboutPage() {
           <p className="mt-5 leading-relaxed text-slate-600">
             这个工具箱就是我把自己踩过的坑、写过的模板、总结的流程，
             全部做成了<strong>打开浏览器就能用</strong>的小工具。
-            数据存你自己设备上，<strong>免费试用 1 个月，之后 ¥9.9/月订阅</strong>，不绑卡、不自动扣费。
+            数据存你自己设备上，<strong>免费试用 1 个月，之后 ¥9.9/月订阅这个工作台</strong>，不绑卡、不自动扣费。
           </p>
 
           {/* CTA 组 */}
@@ -181,6 +181,9 @@ export default function AboutPage() {
           <p className="mx-auto mt-2 max-w-xl text-slate-600">
             帮老板把每天最重复的活交给工具——省人、省时、省成本。
             告诉我你最头疼的那个环节，我把它做成专用工具，不搞大系统，就解决那一个问题。
+          </p>
+          <p className="mx-auto mt-3 text-xs font-medium text-amber-700">
+            以下为企业定制服务，按项目单独报价，与上方工作台订阅（¥9.9/月 · ¥99/年 · ¥199 买断）<strong>互不相干、不随订阅赠送</strong>。
           </p>
         </div>
 

@@ -51,7 +51,7 @@ export function HomePage() {
               <Card className="overflow-hidden p-3 shadow-[0_30px_80px_rgba(15,55,50,0.15)]">
                 <div className="rounded-xl bg-ink p-5 text-white">
                   <div className="flex items-center justify-between"><span className="text-sm font-semibold">今日工作台</span><span className="rounded-full bg-white/10 px-2 py-1 text-xs">已自动保存</span></div>
-                  <div className="mt-8 grid grid-cols-3 gap-3">{[['6','外贸单据'],['5','贸商工具'],['永久','免费使用']].map(([value, label]) => <div key={label} className="rounded-xl bg-white/8 p-3"><p className="text-2xl font-semibold">{value}</p><p className="mt-1 text-xs text-white/60">{label}</p></div>)}</div>
+                  <div className="mt-8 grid grid-cols-3 gap-3">{[['6','外贸单据'],['5','贸商工具'],['买断','永久使用']].map(([value, label]) => <div key={label} className="rounded-xl bg-white/8 p-3"><p className="text-2xl font-semibold">{value}</p><p className="mt-1 text-xs text-white/60">{label}</p></div>)}</div>
                 </div>
                 <div className="grid gap-3 p-4 sm:grid-cols-2">{DOCUMENT_TYPES.slice(0, 4).map((item, index) => <div key={item.code} className="rounded-xl border border-slate-200 p-4 transition-colors hover:border-brand-200"><div className="flex items-center justify-between"><span className="grid h-8 w-8 place-items-center rounded-lg bg-brand-50 text-xs font-bold text-brand-700">{item.code}</span><span className="text-xs text-slate-400">{index + 1}/6</span></div><p className="mt-4 font-semibold">{item.name}</p><p className="mt-1 text-xs leading-5 text-slate-500">{item.description}</p></div>)}</div>
               </Card>
@@ -182,7 +182,7 @@ export function HomePage() {
               </Reveal>
             ))}
           </div>
-          <p className="mt-6 text-center text-sm text-slate-500">订阅按月 / 年 / 买断任选；也支持为你的企业私人定制工具工作台，微信确认后开工。</p>
+          <p className="mt-6 text-center text-sm text-slate-500">上面是<strong className="font-semibold text-slate-600">工作台的使用费</strong>（按月 / 年 / 买断任选）。若想为你的企业私人定制专属工具，属于另一项服务，微信聊需求后单独报价，<strong className="font-semibold text-slate-600">不包含在订阅内</strong>。</p>
         </div>
       </section>
 
@@ -225,7 +225,7 @@ export function HomePage() {
         <div className="animate-drift pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
         <div className="relative mx-auto max-w-7xl px-5 py-16 text-center lg:px-8">
           <h2 className="text-3xl font-semibold tracking-tight text-white">把外贸生意里的琐碎，交给一个工作台</h2>
-          <p className="mx-auto mt-3 max-w-xl text-white/80">免费试用 1 个月，之后 ¥9.9/月订阅，不绑卡、不自动扣费。今天就开始，把时间留给真正的成交。</p>
+          <p className="mx-auto mt-3 max-w-xl text-white/80">免费试用 1 个月，之后 ¥9.9/月<strong className="font-semibold">订阅这个工作台</strong>，不绑卡、不自动扣费。今天就开始，把时间留给真正的成交。</p>
           <div className="mt-7 flex justify-center">
             <Button asChild size="lg" variant="secondary"><Link to="/documents">免费试用制作单据<ArrowRight className="h-4 w-4" /></Link></Button>
           </div>
