@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { MembershipProvider } from '../features/membership/MembershipContext'
 import type { MembershipApi } from '../features/membership/types'
+import { PRICING_SUMMARY, WECHAT_ID } from '../features/membership/staticConfig'
 import { AuthPage } from './AuthPage'
 
 afterEach(() => vi.restoreAllMocks())
@@ -36,16 +37,16 @@ it('registers with a contact field and explains the server trial', async () => {
   await userEvent.click(screen.getByRole('button', { name: '注册并开始试用' }))
 
   expect(membershipApi.register).toHaveBeenCalledWith({ username: 'kyrie_user', password: 'password88', contact: 'wx-kyrie' })
-  expect(await screen.findByText('注册成功，30 天完整试用已开启')).toBeInTheDocument()
+  expect(await screen.findByText(`注册成功，${PRICING_SUMMARY.trialDays} 天完整试用已开启`)).toBeInTheDocument()
 })
 
 it('switches to login without asking for contact information', async () => {
-  vi.spyOn(window, 'fetch').mockResolvedValue(new Response(JSON.stringify({ supportContact: '微信 Kyrie客服' }), { status: 200, headers: { 'content-type': 'application/json' } }))
   render(<MemoryRouter><MembershipProvider api={api()}><AuthPage /></MembershipProvider></MemoryRouter>)
   await screen.findByRole('button', { name: '我已有账号' })
   await userEvent.click(screen.getByRole('button', { name: '我已有账号' }))
 
   expect(screen.queryByLabelText('联系方式')).not.toBeInTheDocument()
   expect(screen.getByRole('button', { name: '登录' })).toBeInTheDocument()
-  expect(await screen.findByText(/微信 Kyrie客服/)).toBeInTheDocument()
+  // 登录态下给出人工找回密码的出口，联系人取自 staticConfig。
+  expect(await screen.findByText(`忘记密码？请联系人工客服：${WECHAT_ID}。`)).toBeInTheDocument()
 })

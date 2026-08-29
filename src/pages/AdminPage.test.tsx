@@ -1,86 +1,112 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
-import { MembershipProvider } from '../features/membership/MembershipContext'
-import type { MembershipApi, PaymentOrder } from '../features/membership/types'
 import { AdminPage } from './AdminPage'
+import type { AdminMemberRow } from '../features/membership/backendAdminApi'
 
+// 站长后台现在走服务端鉴权（backendAdminApi），只有 isBackendEnabled() 为真时才渲染该分支。
 const mocks = vi.hoisted(() => ({
-  users: vi.fn(), orders: vi.fn(), audit: vi.fn(), paymentSettings: vi.fn(),
-  confirmOrder: vi.fn(), rejectOrder: vi.fn(), changeUserStatus: vi.fn(), resetPassword: vi.fn(),
-  grantEntitlement: vi.fn(), grantDays: vi.fn(), uploadQr: vi.fn(),
+  isLoggedIn: vi.fn(),
+  login: vi.fn(),
+  listMembers: vi.fn(),
+  grant: vi.fn(),
+  revoke: vi.fn(),
+  logout: vi.fn(),
 }))
 
-vi.mock('../features/membership/adminApi', () => ({ adminApi: mocks }))
+vi.mock('../features/membership/backendAdminApi', () => ({ backendAdminApi: mocks }))
 
-const adminSnapshot = {
-  user: { id: 'admin-1', username: 'admin_one', displayName: '管理员一', contact: '', role: 'admin' as const, status: 'active' as const, passwordResetRequired: false, createdAt: '2026-08-17T00:00:00.000Z' },
-  entitlement: { phase: 'admin' as const, hasAccess: true, plan: null, expiresAt: null, trialEndsAt: null },
+vi.mock('../services/apiClient', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../services/apiClient')>()
+  return { ...actual, isBackendEnabled: () => true }
+})
+
+const member: AdminMemberRow = {
+  username: 'buyer_one',
+  plan: 'yearly',
+  status: 'active',
+  createdAt: '2026-08-17T00:00:00.000Z',
+  memberUntil: Date.parse('2027-08-17T00:00:00.000Z'),
+  hasAccess: true,
+  phase: 'active_yearly',
+  orders: 1,
 }
-const user = { id: 'user-1', username: 'buyer_one', displayName: 'buyer_one', contact: 'wx_888', role: 'user' as const, status: 'active' as const, passwordResetRequired: false, createdAt: '2026-08-17T00:00:00.000Z', trialEndsAt: '2026-08-20T00:00:00.000Z', entitlement: { phase: 'trialing' as const, hasAccess: true, plan: null, expiresAt: null, trialEndsAt: '2026-08-20T00:00:00.000Z' } }
-const order: PaymentOrder = { orderId: 'KTB-20260817-ABCD1234', userId: 'user-1', username: 'buyer_one', plan: 'yearly', amountCny: 199, paymentMethod: 'alipay', payerHint: '支付宝尾号 7788', paidAtClaimed: '2026-08-17T08:30:00.000Z', status: 'pending_review', createdAt: '2026-08-17T08:00:00.000Z', claimedAt: '2026-08-17T08:31:00.000Z', reviewedAt: null }
 
-function api(): MembershipApi {
-  return { me: vi.fn().mockResolvedValue(adminSnapshot), login: vi.fn(), register: vi.fn(), logout: vi.fn(), changePassword: vi.fn(), getPlans: vi.fn(), createOrder: vi.fn(), claimOrder: vi.fn(), getOwnOrders: vi.fn() }
+function renderAdmin() {
+  return render(
+    <MemoryRouter>
+      <AdminPage />
+    </MemoryRouter>,
+  )
 }
 
 beforeEach(() => {
   vi.clearAllMocks()
-  mocks.users.mockResolvedValue([user])
-  mocks.orders.mockResolvedValue([order])
-  mocks.audit.mockResolvedValue([])
-  mocks.paymentSettings.mockResolvedValue({ wechatConfigured: true, alipayConfigured: false, supportContact: 'Kyrie客服' })
-  mocks.confirmOrder.mockResolvedValue({})
-  mocks.rejectOrder.mockResolvedValue({})
-  vi.spyOn(window, 'confirm').mockReturnValue(true)
-  vi.spyOn(window, 'prompt').mockReturnValue('未查到对应流水')
+  mocks.isLoggedIn.mockResolvedValue(false)
+  mocks.listMembers.mockResolvedValue([member])
+  mocks.grant.mockResolvedValue(undefined)
+  mocks.revoke.mockResolvedValue(undefined)
 })
 
-it('shows complete payment evidence and confirms with a full entitlement summary', async () => {
-  render(<MemoryRouter><MembershipProvider api={api()}><AdminPage /></MembershipProvider></MemoryRouter>)
-
-  expect(await screen.findByText('KTB-20260817-ABCD1234')).toBeInTheDocument()
-  expect(screen.getAllByText('支付宝').length).toBeGreaterThan(0)
-  expect(screen.getAllByText(/2026/).length).toBeGreaterThan(1)
-  expect(screen.getByText(/微信已配置 · 支付宝未配置/)).toBeInTheDocument()
-  await userEvent.type(screen.getByLabelText('内部备注（仅管理员可见）'), '已核对支付宝账单')
-  await userEvent.click(screen.getByRole('button', { name: '确认到账并开通' }))
-  expect(window.confirm).toHaveBeenCalledWith(expect.stringContaining('KTB-20260817-ABCD1234'))
-  expect(window.confirm).toHaveBeenCalledWith(expect.stringContaining('年度'))
-  expect(window.confirm).toHaveBeenCalledWith(expect.stringContaining('支付宝'))
-  expect(mocks.confirmOrder).toHaveBeenCalledWith(order.orderId, '已核对支付宝账单')
+it('shows the server-side login form when the admin is not signed in', async () => {
+  renderAdmin()
+  expect(await screen.findByRole('heading', { name: '站长后台登录' })).toBeInTheDocument()
+  expect(screen.getByLabelText('站长账号')).toBeInTheDocument()
+  expect(screen.getByLabelText('密码')).toBeInTheDocument()
 })
 
-it('provides search, status filters and all manual grant options', async () => {
-  render(<MemoryRouter><MembershipProvider api={api()}><AdminPage /></MembershipProvider></MemoryRouter>)
-  expect(await screen.findByLabelText('搜索用户')).toBeInTheDocument()
-  expect(screen.getByLabelText('账号状态')).toBeInTheDocument()
-  expect(screen.getByRole('button', { name: '开通月度' })).toBeInTheDocument()
-  expect(screen.getByRole('button', { name: '开通年度' })).toBeInTheDocument()
-  expect(screen.getByRole('button', { name: '开通永久' })).toBeInTheDocument()
-  expect(screen.getByRole('button', { name: '按天延长' })).toBeInTheDocument()
-  expect(screen.getByText(/注册时间：/)).toBeInTheDocument()
-  expect(screen.getByText(/试用截止：/)).toBeInTheDocument()
-  expect(screen.getByRole('button', { name: '标记信息不匹配' })).toBeInTheDocument()
-  expect(screen.getByRole('button', { name: '拒绝申请' })).toBeInTheDocument()
+it('reports a wrong password instead of granting access', async () => {
+  mocks.login.mockResolvedValue(false)
+  renderAdmin()
+  await userEvent.type(await screen.findByLabelText('站长账号'), 'admin')
+  await userEvent.type(screen.getByLabelText('密码'), 'wrong-password')
+  await userEvent.click(screen.getByRole('button', { name: '登录' }))
+
+  expect(await screen.findByText('站长账号或密码错误')).toBeInTheDocument()
+  expect(mocks.listMembers).not.toHaveBeenCalled()
 })
 
-it('sends and later displays an administrator-only rejection note', async () => {
-  const rendered = render(<MemoryRouter><MembershipProvider api={api()}><AdminPage /></MembershipProvider></MemoryRouter>)
-  await userEvent.type(await screen.findByLabelText('内部备注（仅管理员可见）'), '内部核对记录')
-  await userEvent.click(screen.getByRole('button', { name: '拒绝申请' }))
-  await waitFor(() => expect(mocks.rejectOrder).toHaveBeenCalledWith(order.orderId, '未查到对应流水', '内部核对记录'))
+it('lists members and exposes the plan options after signing in', async () => {
+  mocks.isLoggedIn.mockResolvedValue(true)
+  mocks.login.mockResolvedValue(true)
+  renderAdmin()
 
-  rendered.unmount()
-  mocks.orders.mockResolvedValue([{ ...order, status: 'rejected', adminNote: '内部核对记录' }])
-  render(<MemoryRouter><MembershipProvider api={api()}><AdminPage /></MembershipProvider></MemoryRouter>)
-  expect(await screen.findByText('已保存的内部备注')).toBeInTheDocument()
-  expect(screen.getByText('内部核对记录')).toBeInTheDocument()
+  expect(await screen.findByRole('heading', { name: '站长后台（服务端）' })).toBeInTheDocument()
+  expect(screen.getByText(`会员列表（1）`)).toBeInTheDocument()
+  expect(screen.getByText('buyer_one')).toBeInTheDocument()
+  expect(screen.getByRole('button', { name: '吊销' })).toBeInTheDocument()
+
+  // The plan dropdown is driven by the single source of truth in staticConfig.
+  const options = screen.getAllByRole('option').map((option) => option.textContent)
+  expect(options).toEqual(['月度会员', '年度会员', '本地买断版'])
 })
 
-it('explains that a signed-in normal user has no admin access', async () => {
-  const normalApi = api()
-  normalApi.me = vi.fn().mockResolvedValue({ ...adminSnapshot, user: { ...adminSnapshot.user, role: 'user' as const } })
-  render(<MemoryRouter><MembershipProvider api={normalApi}><AdminPage /></MembershipProvider></MemoryRouter>)
-  expect(await screen.findByRole('heading', { name: '无权访问管理员后台' })).toBeInTheDocument()
+it('asks for a username before granting a membership', async () => {
+  mocks.isLoggedIn.mockResolvedValue(true)
+  renderAdmin()
+  await userEvent.click(await screen.findByRole('button', { name: '发放' }))
+
+  expect(await screen.findByText('请填写要发放会员的客户用户名')).toBeInTheDocument()
+  expect(mocks.grant).not.toHaveBeenCalled()
+})
+
+it('grants the selected plan and then revokes it', async () => {
+  mocks.isLoggedIn.mockResolvedValue(true)
+  renderAdmin()
+
+  await userEvent.type(await screen.findByPlaceholderText('客户用户名'), 'buyer_two')
+  await userEvent.click(screen.getByRole('button', { name: '发放' }))
+  await screen.findByText('已为 buyer_two 发放 年度会员')
+  expect(mocks.grant).toHaveBeenCalledWith({ username: 'buyer_two', plan: 'yearly', days: 365 })
+
+  await userEvent.click(screen.getByRole('button', { name: '吊销' }))
+  expect(await screen.findByText('已吊销 buyer_one 的会员')).toBeInTheDocument()
+  expect(mocks.revoke).toHaveBeenCalledWith('buyer_one')
+})
+
+it('shows a retry message when the member list cannot be loaded', async () => {
+  mocks.isLoggedIn.mockResolvedValue(true)
+  mocks.listMembers.mockRejectedValue(new Error('network down'))
+  renderAdmin()
+  expect(await screen.findByText('读取会员列表失败，请重试')).toBeInTheDocument()
 })

@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { MembershipProvider } from './MembershipContext'
 import type { MembershipApi } from './types'
 import { MembershipPage } from '../../pages/MembershipPage'
+import { PLANS, PRICING_SUMMARY } from './staticConfig'
 
 beforeEach(() => window.localStorage.clear())
 
@@ -22,12 +23,14 @@ it('presents the approved paid plans without demo activation controls', () => {
   )
 
   expect(screen.getByRole('heading', { name: '先完整试用，再决定是否付费' })).toBeInTheDocument()
-  expect(screen.getByText('月度订阅')).toBeInTheDocument()
-  expect(screen.getByText('年度订阅')).toBeInTheDocument()
-  expect(screen.getByText('永久买断')).toBeInTheDocument()
-  expect(screen.getByText('¥29')).toBeInTheDocument()
-  expect(screen.getByText('¥199')).toBeInTheDocument()
-  expect(screen.getByText('¥599')).toBeInTheDocument()
+  // 方案名与价格一律与 staticConfig 对齐，避免页面改价后测试仍写死旧数字。
+  for (const plan of PLANS) {
+    expect(screen.getByRole('heading', { name: plan.name })).toBeInTheDocument()
+    expect(screen.getByText(`¥${plan.amountCny}`)).toBeInTheDocument()
+  }
+  expect(screen.getAllByText(PRICING_SUMMARY.lifetimeScope, { exact: false }).length).toBeGreaterThan(0)
+  expect(screen.getAllByText(PRICING_SUMMARY.lifetimeExcludes, { exact: false }).length).toBeGreaterThan(0)
+  expect(screen.getAllByText(PRICING_SUMMARY.noAutoCharge, { exact: false }).length).toBeGreaterThan(0)
   expect(screen.getAllByText(/^管理员席位[一二三]$/)).toHaveLength(3)
   expect(screen.queryByText('演示激活此方案')).not.toBeInTheDocument()
 })

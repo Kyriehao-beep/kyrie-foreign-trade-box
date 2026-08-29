@@ -1,5 +1,6 @@
 import { MessageCircle, Wrench, Globe, Rocket, Heart, CheckCircle2, ArrowRight, Sparkles, TrendingUp, Clock, Zap } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { PRICING_SUMMARY } from '../features/membership/staticConfig'
 
 /* ── 企业定制服务项（降本增效，销售导向）──────────── */
 const SERVICES = [
@@ -110,7 +111,8 @@ export default function AboutPage() {
           <p className="mt-5 leading-relaxed text-slate-600">
             这个工具箱就是我把自己踩过的坑、写过的模板、总结的流程，
             全部做成了<strong>打开浏览器就能用</strong>的小工具。
-            数据存你自己设备上，<strong>免费试用 1 个月，之后 ¥9.9/月订阅这个工作台</strong>，不绑卡、不自动扣费。
+            数据默认保存在你的浏览器里，本地功能不会主动上传业务资料，
+            <strong>{PRICING_SUMMARY.trial}，之后 {PRICING_SUMMARY.monthly}订阅这个工作台</strong>，不绑卡、{PRICING_SUMMARY.noAutoCharge}。
           </p>
 
           {/* CTA 组 */}
@@ -120,7 +122,7 @@ export default function AboutPage() {
               className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-brand-700"
             >
               <Zap className="h-4 w-4" />
-              免费使用工具箱
+              {PRICING_SUMMARY.trial}，开始使用
             </Link>
             <Link
               to="/contact"
@@ -141,9 +143,9 @@ export default function AboutPage() {
           </div>
           <h2 className="text-xl font-bold text-slate-900">这个网站本身就是证明</h2>
           <p className="mt-2 text-sm leading-relaxed text-slate-600">
-            我不是在卖 PPT 方案。你现在看到的这个工具箱——从单据生成到跟单管理、
-            从报价计算到世界时区——每一行代码都是我在实际外贸工作中踩过坑后，
-            一个个做出来给自己用的。<strong>能帮到我，就能帮到你。</strong>
+            我不是在卖 PPT 方案，你现在看到的这个工具箱就是成品本身——从单据生成到跟单管理、
+            从报价计算到世界时区，都是按真实外贸场景一个个做出来自己也在用的。
+            好不好用，打开试 14 天就知道。
           </p>
 
           <ul className="mt-4 space-y-2.5">
@@ -152,7 +154,7 @@ export default function AboutPage() {
               '跟单助手（优先级 / 紧急度 / 时间线 / 业务建议剧本）',
               '报价助手 + 实时汇率 + 世界时区栏',
               'PDF 与 Excel 一键导出，买卖方资料模板复用',
-              '纯前端运行，数据存你的浏览器，隐私零风险',
+              '本地功能在浏览器中运行，数据默认保存在当前浏览器，不会主动上传业务资料',
             ].map((item) => (
               <li key={item} className="flex items-start gap-2 text-sm text-slate-700">
                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
@@ -183,7 +185,7 @@ export default function AboutPage() {
             告诉我你最头疼的那个环节，我把它做成专用工具，不搞大系统，就解决那一个问题。
           </p>
           <p className="mx-auto mt-3 text-xs font-medium text-amber-700">
-            以下为企业定制服务，按项目单独报价，与上方工作台订阅（¥9.9/月 · ¥99/年 · ¥199 买断）<strong>互不相干、不随订阅赠送</strong>。
+            以下是<strong>定制服务的起步价</strong>，按项目单独报价，与工作台的使用费（{PRICING_SUMMARY.monthly} · {PRICING_SUMMARY.yearly} · {PRICING_SUMMARY.lifetime}）<strong>互不相干、不随订阅或买断赠送</strong>。
           </p>
         </div>
 
@@ -191,7 +193,7 @@ export default function AboutPage() {
           {SERVICES.map((s) => (
             <div
               key={s.num}
-              className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 transition-all hover:-translate-y-0.5 hover:shadow-lg"
+              className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 transition-[transform,box-shadow,border-color] duration-fast hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lift"
             >
               {s.badge && (
                 <span className="absolute right-3 top-3 rounded-full bg-brand-50 px-2.5 py-0.5 text-[10px] font-bold text-brand-700">
@@ -228,13 +230,13 @@ export default function AboutPage() {
       <section className="mt-12 grid gap-6 sm:grid-cols-3">
         <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-xl">🔒</div>
-          <h3 className="mt-3 font-semibold text-slate-900">数据不上传</h3>
-          <p className="mt-1 text-sm text-slate-500">所有数据存你本地浏览器，我不看、不存、不传。</p>
+          <h3 className="mt-3 font-semibold text-slate-900">业务资料留在本地</h3>
+          <p className="mt-1 text-sm text-slate-500">单据与跟单数据默认保存在当前浏览器，本地功能不会主动上传业务资料。</p>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-xl">⚡</div>
-          <h3 className="mt-3 font-semibold text-slate-900">先免费试用 1 个月</h3>
-          <p className="mt-1 text-sm text-slate-500">免费试用 1 个月，所有功能开放，满意再考虑订阅或定制。</p>
+          <h3 className="mt-3 font-semibold text-slate-900">{PRICING_SUMMARY.trial}</h3>
+          <p className="mt-1 text-sm text-slate-500">{PRICING_SUMMARY.trial}，所有功能开放，满意再考虑订阅或定制。</p>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-xl">🤝</div>
@@ -247,14 +249,14 @@ export default function AboutPage() {
       <section className="mt-12 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 p-10 text-center text-white">
         <h2 className="text-2xl font-bold">现在就开始，把时间省下来做更重要的事</h2>
         <p className="mx-auto mt-3 max-w-xl text-slate-300">
-          不管你是想先用免费工具箱，还是有定制需求想聊聊——都在这里。
+          不管你是想先试用工作台，还是有定制需求想聊聊——都在这里。
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Link
             to="/"
             className="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-6 py-3 text-sm font-bold text-white shadow hover:bg-brand-600"
           >
-            免费试用工具箱 →
+            {PRICING_SUMMARY.trial}，开始使用 →
           </Link>
           <Link
             to="/contact"

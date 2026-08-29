@@ -37,7 +37,7 @@ it('disables only PDF export while generating', async () => {
 
   await user.click(screen.getByRole('button', { name: '导出 PDF' }))
 
-  expect(screen.getByRole('button', { name: '正在生成 PDF…' })).toBeDisabled()
+  expect(screen.getByRole('button', { name: '正在生成…' })).toBeDisabled()
   expect(screen.getByRole('button', { name: '导出 Excel' })).toBeEnabled()
   resolveExport()
   expect(await screen.findByText('PDF 已导出')).toBeInTheDocument()

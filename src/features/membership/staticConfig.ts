@@ -25,15 +25,38 @@ export const WECHAT_ID = 'Kyrie'
 // 付款后给用户的提示文案
 export const CONTACT_TIP = '付款后加微信，备注「外贸盒子+方案」，领取解锁码'
 
-// 免费试用天数（一个月）
-export const TRIAL_DAYS = 30
+// 免费试用天数
+export const TRIAL_DAYS = 14
 
 // 会员方案（价格、时长）
+// 文案口径全站统一：试用 14 天；¥9.9/月；¥99/年；本地买断版 ¥299。
+// 买断版只覆盖「购买时已经上线的本地功能」，未来的 AI、云服务、企业定制不在此列，
+// 因此任何页面都不得出现「未来所有工具永久免费」一类的表述。
 export const PLANS: PlanSummary[] = [
   { id: 'monthly', name: '月度会员', amountCny: 9.9, durationDays: 30, suffix: '/月', note: '完整使用全部工具，随时可取消' },
   { id: 'yearly', name: '年度会员', amountCny: 99, durationDays: 365, suffix: '/年', note: '比月付省约 ¥20，平均每天不到 0.3 元' },
-  { id: 'lifetime', name: '买断（永久）', amountCny: 199, durationDays: null, suffix: '/永久', note: '一次付费，现有 + 未来所有工具永久免费' },
+  {
+    id: 'lifetime',
+    name: '本地买断版',
+    amountCny: 299,
+    durationDays: null,
+    suffix: '/买断',
+    note: '仅包含购买时已上线的本地功能，未来的 AI、云服务与企业定制不包含在内',
+  },
 ]
+
+/** 全站统一的收费说明，页面直接引用，避免各处手写导致口径不一致。 */
+export const PRICING_SUMMARY = {
+  /** 试用天数，页面拼接文案时直接取这个值，避免多处硬编码。 */
+  trialDays: TRIAL_DAYS,
+  trial: '免费试用 14 天',
+  monthly: '¥9.9/月',
+  yearly: '¥99/年',
+  lifetime: '本地买断版 ¥299',
+  lifetimeScope: '买断版仅包含购买时已经上线的本地功能',
+  lifetimeExcludes: '未来的 AI、云服务、企业定制不包含在本地买断版中',
+  noAutoCharge: '不自动扣费',
+} as const
 
 export function planName(id: PlanId): string {
   return PLANS.find((p) => p.id === id)?.name ?? '会员'

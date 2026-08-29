@@ -1,6 +1,7 @@
 import { Mail, Phone, MessageCircle, QrCode, Heart, ArrowRight, CheckCircle2, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { WECHAT_QR_BASE64, WECHAT_PAY_BASE64 } from '../assets/qrCodes'
+import { PRICING_SUMMARY } from '../features/membership/staticConfig'
 
 /* ── 联系信息（真实数据）──────────────────────────── */
 const CONTACT = {
@@ -138,7 +139,7 @@ export default function ContactPage() {
       <div className="mt-12 rounded-2xl bg-gradient-to-r from-brand-600 to-emerald-600 p-8 text-center text-white">
         <h2 className="text-xl font-bold">还没想好？先去试试工具箱</h2>
         <p className="mt-2 text-sm text-white/80">
-          免费试用 1 个月，之后 ¥9.9/月，6 类单据 + 跟单助手 + 报价计算 + 工具箱，全部打开浏览器就能用。
+          {PRICING_SUMMARY.trial}，之后 {PRICING_SUMMARY.monthly}，6 类单据 + 跟单助手 + 报价计算 + 工具箱，全部打开浏览器就能用，{PRICING_SUMMARY.noAutoCharge}。
         </p>
         <Link
           to="/"
