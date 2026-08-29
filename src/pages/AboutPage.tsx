@@ -1,272 +1,282 @@
-import { MessageCircle, Wrench, Globe, Rocket, Heart, CheckCircle2, ArrowRight, Sparkles, TrendingUp, Clock, Zap } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { PRICING_SUMMARY } from '../features/membership/staticConfig'
+import { ArrowRight, Calculator, FileText, MessageCircle, Sparkles, Users, Workflow, X } from 'lucide-react'
+import { Badge } from '../components/ui/badge'
+import { Button } from '../components/ui/button'
+import { Card } from '../components/ui/card'
+import { Reveal } from '../components/Reveal'
+import { WECHAT_QR_BASE64 } from '../assets/qrCodes'
 
-/* ── 企业定制服务项（降本增效，销售导向）──────────── */
+// 微信联系信息（真实数据，与联系页保持一致）。
+const WECHAT = { name: 'Kyrie', note: '（**阳）· 中国香港' }
+
+/* ── 三个痛点 → 改造结果 ───────────────────────────── */
+const PAIN_POINTS = [
+  { icon: Calculator, pain: '报价规则复杂，只有老业务员会算', result: '做成统一的报价与利润模型' },
+  { icon: FileText, pain: '公司单据格式特殊，每次都要手工调整', result: '做成专属单据模板和导出工具' },
+  { icon: Users, pain: '客户、订单和跟进信息分散', result: '做成轻量团队工作台' },
+]
+
+/* ── 三类服务（均为付费 / 按项目报价，不与免费咨询混在同一组）──────────── */
 const SERVICES = [
   {
-    num: '01',
-    price: '¥99',
+    icon: FileText,
+    title: '单据与报价规则定制',
+    price: '¥999',
     unit: '起',
-    icon: <Wrench className="h-5 w-5" />,
-    title: '单据 / 流程定制',
-    desc: '把你的报价模型、单据格式、客户档案做成专属小工具，浏览器打开即用，交付源码。',
-    badge: '最热门',
+    desc: '把你的报价模型、单据格式做成专属小工具，浏览器打开即用，交付源码。',
   },
   {
-    num: '02',
-    price: '¥199',
+    icon: Users,
+    title: '企业轻量工作台',
+    price: '¥2999',
     unit: '起',
-    icon: <TrendingUp className="h-5 w-5" />,
-    title: '企业私有工具工作台',
-    desc: '一整套私有工具（报价 / 跟单 / 库存 / 客户档案），团队共享，数据留本司设备，不依赖外部 SaaS。',
-    badge: '降本增效',
+    desc: '报价 / 跟单 / 客户档案一整套私有工具，团队共享，数据留你司设备。',
   },
   {
-    num: '03',
-    price: '面议',
+    icon: Sparkles,
+    title: 'AI 流程定制',
+    price: '诊断后报价',
     unit: '',
-    icon: <Rocket className="h-5 w-5" />,
-    title: '企业数字化顾问',
-    desc: '先聊你最头疼的环节，给落地方案与报价。小步快跑、交付即用，后续还能迭代。',
-    badge: '按需',
-  },
-  {
-    num: '04',
-    price: '免费',
-    unit: '',
-    icon: <Globe className="h-5 w-5" />,
-    title: '工具箱使用咨询',
-    desc: '已上线全部功能（单据 / 跟单 / 报价 / 汇率 / 时间）有任何问题或新功能建议，随时聊。能做的马上做，不藏着掖着。',
-    badge: '随时欢迎',
+    desc: '先用工具跑通流程，需要 AI 自动化的环节单独评估。',
+    note: 'AI 功能涉及模型或第三方接口时，会提前说明实际调用成本，不使用「永久免费 AI」吸引成交。',
   },
 ]
 
-/* ── 痛点→解决方案 映射 ───────────────────────────── */
-const PAIN_POINTS = [
-  {
-    icon: <Clock className="h-6 w-6" />,
-    pain: '每天花 2 小时在"复制粘贴、对格式、算汇率"',
-    solution: '单据模板 + 报价助手 + 汇率换算，自动化搞定',
-  },
-  {
-    icon: <TrendingUp className="h-6 w-6" />,
-    pain: '客户跟进靠记事本，忘了跟丢单',
-    solution: '跟单助手：优先级 / 紧急度 / 时间线 / 业务建议，不再漏掉任何一个',
-  },
-  {
-    icon: <Zap className="h-6 w-6" />,
-    pain: '时区换算来回查，报价算错丢面子',
-    solution: '世界时间栏常驻顶部 + 汇率实时换算 + 报价计算器，一秒出结果',
-  },
-  {
-    icon: <Sparkles className="h-6 w-6" />,
-    pain: '客户资料和产品明细散落在 Excel / 微信 / 记事本里，做单时到处找',
-    solution: '买卖方资料模板 + 产品明细复用，一次录入，所有单据自动带出',
-  },
+/* ── 合作过程 ───────────────────────────── */
+const PROCESS = [
+  '提交最耗时间的流程',
+  '免费梳理需求和边界',
+  '确认原型、报价和交付范围',
+  '验收后投入使用',
 ]
+
+/* ── 微信二维码弹窗（仅在点击咨询后显示，减少首屏干扰）──────────── */
+function WeChatModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const closeRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    closeRef.current?.focus()
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [open, onClose])
+
+  if (!open) return null
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center" role="presentation">
+      <div className="absolute inset-0 bg-slate-900/50" aria-hidden="true" onClick={onClose} />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="wechat-modal-title"
+        className="relative z-10 w-full max-w-sm rounded-t-2xl bg-white p-6 shadow-pop sm:rounded-2xl"
+      >
+        <button
+          ref={closeRef}
+          type="button"
+          onClick={onClose}
+          aria-label="关闭"
+          className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-lg text-slate-400 transition-colors duration-fast hover:bg-slate-100 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+        >
+          <X className="h-5 w-5" />
+        </button>
+
+        <h2 id="wechat-modal-title" className="text-lg font-bold text-ink">扫码加微信</h2>
+        <p className="mt-1 text-sm text-slate-500">免费梳理一次流程，或聊聊你的定制需求</p>
+
+        <div className="mt-4 rounded-xl border border-line bg-slate-50/60 p-4 text-center">
+          <img
+            src={WECHAT_QR_BASE64}
+            alt="微信二维码"
+            className="mx-auto h-52 w-52 rounded-lg object-contain"
+          />
+        </div>
+
+        <p className="mt-3 text-center text-sm font-medium text-ink">微信：{WECHAT.name} {WECHAT.note}</p>
+        <p className="mt-1 text-center text-xs text-slate-500">加好友备注「公司 + 想做的工具」，我优先通过</p>
+      </div>
+    </div>
+  )
+}
 
 export default function AboutPage() {
+  const [wechatOpen, setWechatOpen] = useState(false)
+
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-      {/* ════════ Hero 主区域 ════════ */}
-      <div className="grid gap-10 lg:grid-cols-[1fr_340px]">
-        {/* —— 左侧：主文案 —— */}
-        <section>
-          {/* 标签 */}
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-4 py-1 text-sm font-semibold text-emerald-700">
-            <Sparkles className="h-4 w-4" />
-            做过外贸的人，才懂外贸人的痛
+    <main>
+      {/* ───────── 1. Hero（首屏直接看到结果、服务方向、咨询按钮）───────── */}
+      <section className="border-b border-line/70 bg-white">
+        <div className="mx-auto grid max-w-shell items-center gap-8 px-5 py-9 lg:grid-cols-[1.05fr_.95fr] lg:px-8 lg:py-14">
+          <div>
+            <Badge><Sparkles className="mr-1.5 h-3.5 w-3.5" />外贸流程定制 · 把重复活变成工具</Badge>
+
+            <h1 className="mt-4 text-2xl font-bold leading-tight tracking-tight text-ink sm:text-3xl lg:text-4xl">
+              把你每天重复两小时的外贸流程，<br className="hidden sm:block" />做成一个专属工具
+            </h1>
+
+            <p className="mt-4 text-base leading-relaxed text-slate-600 sm:text-lg">
+              不做大而全的软件。从报价、制单、跟单中的一个具体问题开始，先梳理流程，再做成团队打开就能使用的工具。
+            </p>
+
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <Button size="lg" onClick={() => setWechatOpen(true)}>
+                <MessageCircle className="h-4 w-4" />
+                免费梳理一次流程
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link to="/">
+                  先体验现有工具
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
           </div>
 
-          <h1 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-4xl">
-            让工具替你干重复活
-            <br />
-            把时间留给真正的成交
-          </h1>
-
-          <p className="mt-4 text-lg font-medium text-brand-700">
-            不是卖软件，是帮你把每天最耗时间的环节，变成"打开就用"的小工具
-          </p>
-
-          <p className="mt-4 leading-relaxed text-slate-600">
-            我自己就是做外贸出身的。我知道你每天有多少时间花在这些事情上：
-          </p>
-
-          {/* 痛点列表 */}
-          <div className="mt-5 space-y-4">
-            {PAIN_POINTS.map((pp) => (
-              <div key={pp.pain} className="flex gap-3 rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
-                <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-                  {pp.icon}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-800">{pp.pain}</p>
-                  <p className="mt-0.5 text-sm text-brand-700">→ {pp.solution}</p>
-                </div>
+          {/* 右栏：结果示例，让首屏直接看到「做成之后长什么样」 */}
+          <Card className="overflow-hidden p-0">
+            <div className="flex items-center gap-2 border-b border-line bg-brand-50/60 px-5 py-3">
+              <Workflow className="h-4 w-4 text-brand-600" />
+              <span className="text-xs font-semibold text-brand-700">改造前 / 改造后（示例）</span>
+            </div>
+            <div className="grid grid-cols-2 divide-x divide-line">
+              <div className="p-4">
+                <p className="text-xs font-medium text-slate-400">改造前</p>
+                <p className="mt-2 text-sm leading-6 text-slate-500">每天 2 小时手工对格式、算汇率、记跟进，出错靠返工</p>
               </div>
-            ))}
+              <div className="p-4">
+                <p className="text-xs font-medium text-brand-600">改造后</p>
+                <p className="mt-2 text-sm leading-6 text-ink">打开专属工具，填一次资料，单据、报价、跟进自动跑</p>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      {/* ───────── 2. 三个痛点与结果 ───────── */}
+      <section className="py-9 lg:py-12">
+        <div className="mx-auto max-w-shell px-5 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-sm font-semibold text-brand-600">最耗时间的环节，就是最该做成工具的地方</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">三个常见痛点，对应的结果</h2>
           </div>
 
-          <p className="mt-5 leading-relaxed text-slate-600">
-            这个工具箱就是我把自己踩过的坑、写过的模板、总结的流程，
-            全部做成了<strong>打开浏览器就能用</strong>的小工具。
-            数据默认保存在你的浏览器里，本地功能不会主动上传业务资料，
-            <strong>{PRICING_SUMMARY.trial}，之后 {PRICING_SUMMARY.monthly}订阅这个工作台</strong>，不绑卡、{PRICING_SUMMARY.noAutoCharge}。
-          </p>
-
-          {/* CTA 组 */}
-          <div className="mt-7 flex flex-wrap items-center gap-3">
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-brand-700"
-            >
-              <Zap className="h-4 w-4" />
-              {PRICING_SUMMARY.trial}，开始使用
-            </Link>
-            <Link
-              to="/contact"
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-            >
-              <MessageCircle className="h-4 w-4" />
-              有定制需求？聊聊
-            </Link>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {PAIN_POINTS.map((pp, i) => {
+              const Icon = pp.icon
+              return (
+                <Reveal key={pp.pain} delay={i * 80} as="article">
+                  <Card className="flex h-full flex-col p-4 transition-[transform,box-shadow,border-color] duration-fast hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lift">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <h3 className="mt-3 font-semibold text-ink">{pp.pain}</h3>
+                    <p className="mt-2 text-sm font-medium text-brand-700">→ {pp.result}</p>
+                  </Card>
+                </Reveal>
+              )
+            })}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* —— 右侧：信服力卡片 —— */}
-        <aside className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:mt-4">
-          <div className="mb-3">
-            <span className="inline-block rounded-full bg-emerald-50 px-3 py-0.5 text-xs font-semibold text-emerald-700">
-              先看成果
-            </span>
+      {/* ───────── 3. 三类服务 ───────── */}
+      <section className="border-y border-line/70 bg-slate-50/50 py-9 lg:py-12">
+        <div className="mx-auto max-w-shell px-5 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-sm font-semibold text-brand-600">按要解决的具体问题报价</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">三类服务</h2>
+            <p className="mt-3 text-slate-600">不卖大系统，只解决你最重复、最容易出错的那件事。</p>
           </div>
-          <h2 className="text-xl font-bold text-slate-900">这个网站本身就是证明</h2>
-          <p className="mt-2 text-sm leading-relaxed text-slate-600">
-            我不是在卖 PPT 方案，你现在看到的这个工具箱就是成品本身——从单据生成到跟单管理、
-            从报价计算到世界时区，都是按真实外贸场景一个个做出来自己也在用的。
-            好不好用，打开试 14 天就知道。
-          </p>
 
-          <ul className="mt-4 space-y-2.5">
-            {[
-              '6 类外贸单据（报价单 / PI / 发票 / 装箱单 / 合同 / 报关单）',
-              '跟单助手（优先级 / 紧急度 / 时间线 / 业务建议剧本）',
-              '报价助手 + 实时汇率 + 世界时区栏',
-              'PDF 与 Excel 一键导出，买卖方资料模板复用',
-              '本地功能在浏览器中运行，数据默认保存在当前浏览器，不会主动上传业务资料',
-            ].map((item) => (
-              <li key={item} className="flex items-start gap-2 text-sm text-slate-700">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
-                {item}
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {SERVICES.map((s, i) => {
+              const Icon = s.icon
+              return (
+                <Reveal key={s.title} delay={i * 80} as="article">
+                  <Card className="flex h-full flex-col p-4 transition-[transform,box-shadow,border-color] duration-fast hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lift">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <h3 className="mt-3 font-semibold text-ink">{s.title}</h3>
+
+                    <div className="mt-3 flex items-baseline gap-1">
+                      <span className="text-2xl font-bold text-ink">{s.price}</span>
+                      {s.unit && <span className="text-sm text-slate-500">{s.unit}</span>}
+                    </div>
+
+                    <p className="mt-3 text-sm leading-relaxed text-slate-600">{s.desc}</p>
+
+                    {s.note ? (
+                      <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-800">
+                        {s.note}
+                      </p>
+                    ) : null}
+                  </Card>
+                </Reveal>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── 4. 合作过程 ───────── */}
+      <section className="py-9 lg:py-12">
+        <div className="mx-auto max-w-shell px-5 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-sm font-semibold text-brand-600">一步一步来，不跳步</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">合作过程</h2>
+          </div>
+
+          <ol className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {PROCESS.map((step, i) => (
+              <li key={step}>
+                <Card className="flex h-full items-start gap-3 p-4">
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-600 text-sm font-semibold text-white">
+                    {i + 1}
+                  </span>
+                  <div>
+                    <p className="font-medium text-ink">{step}</p>
+                    {i === 1 ? <p className="mt-1 text-xs text-slate-500">需求和边界聊清楚，再谈报价</p> : null}
+                  </div>
+                </Card>
               </li>
             ))}
-          </ul>
-
-          <div className="mt-5 rounded-lg bg-slate-50 p-3 text-center text-xs text-slate-500">
-            <Heart className="mr-1 inline h-3.5 w-3.5 text-rose-400" />
-            纯个人开发 · 持续迭代中 · 欢迎提需求
-          </div>
-        </aside>
-      </div>
-
-      {/* ════════ 服务定价卡 ════════ */}
-      <section className="mt-16">
-        <div className="text-center">
-          <span className="inline-block rounded-full bg-amber-50 px-4 py-1 text-sm font-semibold text-amber-700">
-            <Rocket className="mr-1 inline h-4 w-4" />
-            企业定制 · 降本增效
-          </span>
-          <h2 className="mt-3 text-2xl font-bold text-slate-900">
-            企业想要专属工具？我帮你量身定制
-          </h2>
-          <p className="mx-auto mt-2 max-w-xl text-slate-600">
-            帮老板把每天最重复的活交给工具——省人、省时、省成本。
-            告诉我你最头疼的那个环节，我把它做成专用工具，不搞大系统，就解决那一个问题。
-          </p>
-          <p className="mx-auto mt-3 text-xs font-medium text-amber-700">
-            以下是<strong>定制服务的起步价</strong>，按项目单独报价，与工作台的使用费（{PRICING_SUMMARY.monthly} · {PRICING_SUMMARY.yearly} · {PRICING_SUMMARY.lifetime}）<strong>互不相干、不随订阅或买断赠送</strong>。
-          </p>
+          </ol>
         </div>
+      </section>
 
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-          {SERVICES.map((s) => (
-            <div
-              key={s.num}
-              className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 transition-[transform,box-shadow,border-color] duration-fast hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lift"
-            >
-              {s.badge && (
-                <span className="absolute right-3 top-3 rounded-full bg-brand-50 px-2.5 py-0.5 text-[10px] font-bold text-brand-700">
-                  {s.badge}
-                </span>
-              )}
-              <div className="flex items-center justify-between">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
-                  {s.icon}
-                </div>
-                <span className="text-xs font-semibold text-slate-400">{s.num}</span>
-              </div>
-
-              <div className="mt-4 flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-slate-900">{s.price}</span>
-                {s.unit && <span className="text-sm text-slate-500">{s.unit}</span>}
-              </div>
-
-              <h3 className="mt-2 font-semibold text-slate-900">{s.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-600">{s.desc}</p>
-
-              <Link
-                to="/contact"
-                className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:text-brand-800"
+      {/* ───────── 5. 最终 CTA ───────── */}
+      <section className="pb-10">
+        <div className="mx-auto max-w-shell px-5 lg:px-8">
+          <Card className="overflow-hidden bg-brand-600 p-6 text-center text-white sm:p-10">
+            <h2 className="text-xl font-bold sm:text-3xl">不用先想清楚要做什么系统</h2>
+            <p className="mx-auto mt-3 max-w-xl text-sm text-white/85">
+              只需要告诉我：你和团队每天最重复、最容易出错的工作是什么。
+            </p>
+            <div className="mt-6 flex justify-center">
+              <Button
+                size="lg"
+                variant="secondary"
+                onClick={() => setWechatOpen(true)}
               >
-                立即咨询 <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
+                <MessageCircle className="h-4 w-4" />
+                微信发送我的问题
+              </Button>
             </div>
-          ))}
+          </Card>
         </div>
       </section>
 
-      {/* ════════ 底部信任闭环 ════════ */}
-      <section className="mt-12 grid gap-6 sm:grid-cols-3">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-xl">🔒</div>
-          <h3 className="mt-3 font-semibold text-slate-900">业务资料留在本地</h3>
-          <p className="mt-1 text-sm text-slate-500">单据与跟单数据默认保存在当前浏览器，本地功能不会主动上传业务资料。</p>
-        </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-xl">⚡</div>
-          <h3 className="mt-3 font-semibold text-slate-900">{PRICING_SUMMARY.trial}</h3>
-          <p className="mt-1 text-sm text-slate-500">{PRICING_SUMMARY.trial}，所有功能开放，满意再考虑订阅或定制。</p>
-        </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-xl">🤝</div>
-          <h3 className="mt-3 font-semibold text-slate-900">做不了会直说</h3>
-          <p className="mt-1 text-sm text-slate-500">不画大饼、不推销不需要的东西。能做的承诺，做不到的不接。</p>
-        </div>
-      </section>
-
-      {/* ════════ 最终 CTA ════════ */}
-      <section className="mt-12 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 p-10 text-center text-white">
-        <h2 className="text-2xl font-bold">现在就开始，把时间省下来做更重要的事</h2>
-        <p className="mx-auto mt-3 max-w-xl text-slate-300">
-          不管你是想先试用工作台，还是有定制需求想聊聊——都在这里。
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-6 py-3 text-sm font-bold text-white shadow hover:bg-brand-600"
-          >
-            {PRICING_SUMMARY.trial}，开始使用 →
-          </Link>
-          <Link
-            to="/contact"
-            className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur hover:bg-white/20"
-          >
-            <MessageCircle className="h-4 w-4" />
-            加微信聊聊
-          </Link>
-        </div>
-      </section>
-    </div>
+      <WeChatModal open={wechatOpen} onClose={() => setWechatOpen(false)} />
+    </main>
   )
 }
