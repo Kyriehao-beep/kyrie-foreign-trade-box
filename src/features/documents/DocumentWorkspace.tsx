@@ -1,6 +1,7 @@
 import { Bookmark, Check, ChevronDown, Copy, FilePlus2, FileText, History, ImagePlus, RotateCcw, Save, Sparkles, Trash2, Upload, Users, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
 import { Button } from '../../components/ui/button'
+import { Badge } from '../../components/ui/badge'
 import { Card } from '../../components/ui/card'
 import { Input } from '../../components/ui/input'
 import { Textarea } from '../../components/ui/textarea'
@@ -25,6 +26,8 @@ import { exportPdfDocument } from '../../services/pdfExport'
 import { clearDraft, deletePartyTemplate, loadDraft, loadPartyTemplates, saveDraft, savePartyTemplate } from '../../services/storage'
 import { DocumentPreview } from './DocumentPreview'
 import { DocumentPdfExportSurface } from './pdf/DocumentPdfTemplate'
+import { createSampleQuotationDraft } from './sampleData'
+import { CustomServiceNudge } from '../marketing/CustomServiceNudge'
 
 function Field({ label, value, onChange, type = 'text', name, review = false }: { label: string; value: string | number; onChange: (value: string) => void; type?: string; name?: string; review?: boolean }) {
   return (
@@ -62,8 +65,12 @@ function CollapsibleSection({ title, done, filled, total, defaultOpen = true, ac
 }
 
 export function DocumentWorkspace() {
+  // 首页「体验示例报价单」通过 ?sample=qt 进入临时示例模式；示例仅在内存中，不写入本地草稿。
+  const initialSample = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('sample') === 'qt'
+  const [sampleMode, setSampleMode] = useState(initialSample)
   const [type, setType] = useState<DocumentType>('QT')
-  const [draft, setDraft] = useState<DocumentDraft>(() => loadDraft('QT').value ?? createEmptyDraft('QT'))
+  const [draft, setDraft] = useState<DocumentDraft>(() => (initialSample ? createSampleQuotationDraft() : (loadDraft('QT').value ?? createEmptyDraft('QT'))))
+  const [showServiceNudge, setShowServiceNudge] = useState(false)
   const [saveStatus, setSaveStatus] = useState('准备就绪')
   const [exportStatus, setExportStatus] = useState('')
   const [mobileView, setMobileView] = useState<'form' | 'preview'>('form')
@@ -79,7 +86,9 @@ export function DocumentWorkspace() {
   useEffect(() => { setTemplates(loadPartyTemplates().value) }, [])
 
   // 自动保存：先短暂显示「正在保存…」，落盘后显示带时间戳的「已保存 · HH:MM」。
+  // 示例模式下暂停自动保存，避免覆盖用户已有的真实草稿。
   useEffect(() => {
+    if (sampleMode) return
     setSaveStatus('正在保存…')
     const timer = window.setTimeout(() => {
       const result = saveDraft({ ...draft, updatedAt: new Date().toISOString() })
@@ -93,7 +102,7 @@ export function DocumentWorkspace() {
       }
     }, 350)
     return () => window.clearTimeout(timer)
-  }, [draft])
+  }, [draft, sampleMode])
 
   // 撤销清除的倒计时清理。
   useEffect(() => {
@@ -148,8 +157,43 @@ export function DocumentWorkspace() {
   }, [draft])
 
   function selectType(nextType: DocumentType) {
+    exitSampleMode()
     setType(nextType)
     setDraft(loadDraft(nextType).value ?? createEmptyDraft(nextType))
+  }
+
+  // 退出示例模式：丢弃内存中的示例数据，恢复当前类型的真实草稿（如有），并清除查询参数。
+  function exitSampleMode() {
+    if (!sampleMode) return
+    if (window.history?.replaceState) {
+      const url = new URL(window.location.href)
+      url.searchParams.delete('sample')
+      window.history.replaceState({}, '', url.pathname + url.search)
+    }
+    setSampleMode(false)
+    setShowServiceNudge(false)
+    setDraft(loadDraft(type).value ?? createEmptyDraft(type))
+  }
+
+  // 将示例数据显式保存为当前草稿；若已存在真实草稿，先警告再覆盖。
+  function saveSampleAsDraft() {
+    const existing = loadDraft(type).value
+    if (existing) {
+      const ok = window.confirm(`当前已有「${currentType.fullName}」草稿，确定用示例数据覆盖吗？此操作会替换现有草稿。`)
+      if (!ok) return
+    }
+    const result = saveDraft({ ...draft, updatedAt: new Date().toISOString() })
+    if (result.ok) {
+      if (window.history?.replaceState) {
+        const url = new URL(window.location.href)
+        url.searchParams.delete('sample')
+        window.history.replaceState({}, '', url.pathname + url.search)
+      }
+      setSampleMode(false)
+      setSaveStatus('示例已保存为草稿')
+    } else {
+      setSaveStatus(result.error)
+    }
   }
 
   function updateParty(kind: 'seller' | 'buyer', key: keyof Party, value: string) {
@@ -255,6 +299,7 @@ export function DocumentWorkspace() {
     setType('CI')
     setDraft(loadDraft('CI').value ?? base('CI'))
     setSaveStatus('已从 PI 生成商业发票(CI)与装箱单(PL)，可切换查看')
+    setShowServiceNudge(true)
   }
 
   function removeDraft() {
@@ -320,6 +365,7 @@ export function DocumentWorkspace() {
     try {
       await exportPdfDocument(pdfRootRef.current, draft.documentNumber)
       setExportStatus('PDF 已导出')
+      setShowServiceNudge(true)
     } catch {
       setExportStatus('PDF 生成失败，请检查内容后重试')
     } finally {
@@ -334,6 +380,7 @@ export function DocumentWorkspace() {
     try {
       await exportExcelDocument(draft)
       setExportStatus('Excel 已导出')
+      setShowServiceNudge(true)
     } catch {
       setExportStatus('Excel 生成失败，请检查内容后重试')
     } finally {
@@ -350,11 +397,16 @@ export function DocumentWorkspace() {
   return (
     <div className="mx-auto max-w-[1600px] px-4 py-6 lg:px-6">
       <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <div>
-          <p className="text-sm font-semibold text-brand-600">外贸单据中心</p>
-          <h1 className="mt-1 text-2xl font-semibold text-ink">{currentType.fullName}</h1>
-          <p className="mt-1 text-sm text-slate-500">{currentType.description}</p>
-        </div>
+          <div>
+            <p className="text-sm font-semibold text-brand-600">外贸单据中心</p>
+            <h1 className="mt-1 text-2xl font-semibold text-ink">{currentType.fullName}</h1>
+            <p className="mt-1 text-sm text-slate-500">{currentType.description}</p>
+            {sampleMode ? (
+              <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-800">
+                <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />示例数据 · 仅演示，未保存到本地
+              </p>
+            ) : null}
+          </div>
         <div className="flex flex-wrap items-center gap-2 print:hidden">
           <label className="text-xs font-medium text-slate-600">语言<select aria-label="单据语言" className="ml-1.5 h-10 rounded-xl border border-line bg-white px-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" value={draft.language} onChange={(event) => setDraft({ ...draft, language: event.target.value as DocumentLanguage })}><option value="zh">中文</option><option value="en">英文</option><option value="bilingual">双语</option></select></label>
           <label className="text-xs font-medium text-slate-600">版式<select aria-label="版式风格" className="ml-1.5 h-10 rounded-xl border border-line bg-white px-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" value={draft.layout} onChange={(event) => setDraft({ ...draft, layout: event.target.value as DocumentLayout })}><option value="modern">现代蓝绿</option><option value="classic">经典外贸</option><option value="minimal">简约商务</option></select></label>
@@ -363,49 +415,64 @@ export function DocumentWorkspace() {
 
       {/* 完成度 + 快捷操作 */}
       <div className="mb-4 flex flex-wrap items-center gap-2 print:hidden">
-        <span className="inline-flex items-center gap-2 rounded-xl border border-line bg-white px-3 py-2 text-sm font-medium text-ink">
-          <Sparkles className="h-4 w-4 text-brand-600" aria-hidden="true" />已完成 {completion.doneCount}/6 个区域
-        </span>
-        <div className="relative">
-          <Button type="button" variant="outline" size="sm" onClick={() => setRecentMenu((v) => !v)} aria-expanded={recentMenu}><History className="h-4 w-4" aria-hidden="true" />最近单据</Button>
-          {recentMenu ? (
-            <>
-              <div className="fixed inset-0 z-10" onClick={() => setRecentMenu(false)} aria-hidden="true" />
-              <div className="absolute left-0 top-full z-20 mt-1 w-64 rounded-xl border border-line bg-white p-2 shadow-pop">
-                {recentDrafts.length === 0 ? <p className="px-2 py-1.5 text-xs text-slate-400">暂无已保存的单据</p> : recentDrafts.map(({ item, draft: d }) => (
-                  <button key={item.code} type="button" onClick={() => { selectType(item.code); setRecentMenu(false) }} className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-2 text-left text-sm text-slate-700 transition-colors duration-fast hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
-                    <span className="truncate">{item.name}</span>
-                    <span className="num shrink-0 text-xs text-slate-400">{d ? new Date(d.updatedAt).toLocaleDateString() : ''}</span>
-                  </button>
-                ))}
-              </div>
-            </>
-          ) : null}
-        </div>
-        <Button type="button" variant="outline" size="sm" onClick={copyDraft}><Copy className="h-4 w-4" aria-hidden="true" />复制当前单据</Button>
-        <Button type="button" variant="outline" size="sm" onClick={generateFromPI} title={type === 'PI' ? '从当前 PI 生成 CI 与 PL' : '请先切到形式发票(PI)'}>{type === 'PI' ? <FileText className="h-4 w-4" aria-hidden="true" /> : <FileText className="h-4 w-4 opacity-50" aria-hidden="true" />}从 PI 生成 CI·PL</Button>
-        <Button type="button" variant="outline" size="sm" onClick={resetDraft}><FilePlus2 className="h-4 w-4" aria-hidden="true" />新建空白单据</Button>
-        <Button type="button" variant="outline" size="sm" onClick={addToFollowUp}><Users className="h-4 w-4" aria-hidden="true" />加入跟单助手</Button>
-        {clearConfirm ? (
-          <span className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-2 py-1">
-            <span className="text-xs font-medium text-red-700">确认清除？</span>
-            <Button type="button" size="sm" variant="danger" onClick={removeDraft}>确认清除</Button>
-            <Button type="button" size="sm" variant="ghost" onClick={() => setClearConfirm(false)}>取消</Button>
-          </span>
+        {sampleMode ? (
+          <>
+            <Badge className="bg-amber-100 text-amber-800">示例数据</Badge>
+            <Button type="button" variant="outline" size="sm" onClick={saveSampleAsDraft}><Save className="h-4 w-4" aria-hidden="true" />保存为我的草稿</Button>
+            <Button type="button" variant="ghost" size="sm" onClick={exitSampleMode}>退出示例</Button>
+          </>
         ) : (
-          <Button type="button" variant="danger" size="sm" onClick={() => setClearConfirm(true)}><Trash2 className="h-4 w-4" aria-hidden="true" />清除草稿</Button>
+          <>
+            <span className="inline-flex items-center gap-2 rounded-xl border border-line bg-white px-3 py-2 text-sm font-medium text-ink">
+              <Sparkles className="h-4 w-4 text-brand-600" aria-hidden="true" />已完成 {completion.doneCount}/6 个区域
+            </span>
+            <div className="relative">
+              <Button type="button" variant="outline" size="sm" onClick={() => setRecentMenu((v) => !v)} aria-expanded={recentMenu}><History className="h-4 w-4" aria-hidden="true" />最近单据</Button>
+              {recentMenu ? (
+                <>
+                  <div className="fixed inset-0 z-10" onClick={() => setRecentMenu(false)} aria-hidden="true" />
+                  <div className="absolute left-0 top-full z-20 mt-1 w-64 rounded-xl border border-line bg-white p-2 shadow-pop">
+                    {recentDrafts.length === 0 ? <p className="px-2 py-1.5 text-xs text-slate-400">暂无已保存的单据</p> : recentDrafts.map(({ item, draft: d }) => (
+                      <button key={item.code} type="button" onClick={() => { selectType(item.code); setRecentMenu(false) }} className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-2 text-left text-sm text-slate-700 transition-colors duration-fast hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
+                        <span className="truncate">{item.name}</span>
+                        <span className="num shrink-0 text-xs text-slate-400">{d ? new Date(d.updatedAt).toLocaleDateString() : ''}</span>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : null}
+            </div>
+            <Button type="button" variant="outline" size="sm" onClick={copyDraft}><Copy className="h-4 w-4" aria-hidden="true" />复制当前单据</Button>
+            <Button type="button" variant="outline" size="sm" onClick={generateFromPI} title={type === 'PI' ? '从当前 PI 生成 CI 与 PL' : '请先切到形式发票(PI)'}>{type === 'PI' ? <FileText className="h-4 w-4" aria-hidden="true" /> : <FileText className="h-4 w-4 opacity-50" aria-hidden="true" />}从 PI 生成 CI·PL</Button>
+            <Button type="button" variant="outline" size="sm" onClick={resetDraft}><FilePlus2 className="h-4 w-4" aria-hidden="true" />新建空白单据</Button>
+            <Button type="button" variant="outline" size="sm" onClick={addToFollowUp}><Users className="h-4 w-4" aria-hidden="true" />加入跟单助手</Button>
+            {clearConfirm ? (
+              <span className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-2 py-1">
+                <span className="text-xs font-medium text-red-700">确认清除？</span>
+                <Button type="button" size="sm" variant="danger" onClick={removeDraft}>确认清除</Button>
+                <Button type="button" size="sm" variant="ghost" onClick={() => setClearConfirm(false)}>取消</Button>
+              </span>
+            ) : (
+              <Button type="button" variant="danger" size="sm" onClick={() => setClearConfirm(true)}><Trash2 className="h-4 w-4" aria-hidden="true" />清除草稿</Button>
+            )}
+          </>
         )}
       </div>
 
-      {/* 单据类型切换 */}
-      <div className="mb-4 grid grid-cols-3 gap-2 sm:grid-cols-6 print:hidden">
-        {DOCUMENT_TYPES.map((item) => (
-          <button key={item.code} type="button" aria-label={item.fullName} aria-pressed={type === item.code} onClick={() => selectType(item.code)} className={`flex flex-col items-center gap-0.5 rounded-xl border px-2 py-3 text-center transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${type === item.code ? 'border-brand-500 bg-brand-600 text-white shadow-soft' : 'border-line bg-white text-slate-600 hover:border-brand-200'}`}>
-            <span className="text-xs font-bold opacity-70">{item.code}</span>
-            <span className="text-xs font-semibold leading-tight">{item.name}</span>
-          </button>
-        ))}
-      </div>
+      {/* 上下文定制服务提示：放在始终可见的操作区，避免被预览栏（移动端隐藏）挡住 */}
+      {!sampleMode && showServiceNudge ? <CustomServiceNudge onDismiss={() => setShowServiceNudge(false)} /> : null}
+
+      {/* 单据类型切换（示例模式下隐藏，避免误切到其它类型覆盖草稿） */}
+      {sampleMode ? null : (
+        <div className="mb-4 grid grid-cols-3 gap-2 sm:grid-cols-6 print:hidden">
+          {DOCUMENT_TYPES.map((item) => (
+            <button key={item.code} type="button" aria-label={item.fullName} aria-pressed={type === item.code} onClick={() => selectType(item.code)} className={`flex flex-col items-center gap-0.5 rounded-xl border px-2 py-3 text-center transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${type === item.code ? 'border-brand-500 bg-brand-600 text-white shadow-soft' : 'border-line bg-white text-slate-600 hover:border-brand-200'}`}>
+              <span className="text-xs font-bold opacity-70">{item.code}</span>
+              <span className="text-xs font-semibold leading-tight">{item.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* 手机端：填写 / 预览 切换 */}
       <div className="mb-4 grid grid-cols-2 gap-2 lg:hidden print:hidden">
@@ -560,10 +627,10 @@ export function DocumentWorkspace() {
         <aside className={`${mobileView === 'form' ? 'hidden lg:block' : ''} min-w-0 lg:sticky lg:top-28 lg:self-start`}>
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2 print:hidden">
             <span className="num text-xs font-medium text-slate-500" role="status" aria-live="polite">{exportStatus || saveStatus}</span>
-            <div className="flex gap-2">
-              <Button type="button" size="sm" variant="outline" disabled={isPdfExporting} onClick={() => void handlePdfExport()}>{isPdfExporting ? '正在生成…' : '导出 PDF'}</Button>
-              <Button type="button" size="sm" disabled={isExcelExporting} onClick={() => void handleExcelExport()}>{isExcelExporting ? '正在生成…' : '导出 Excel'}</Button>
-            </div>
+              <div className="flex gap-2">
+                <Button type="button" size="sm" variant="outline" disabled={isPdfExporting} onClick={() => void handlePdfExport()}>{isPdfExporting ? '正在生成…' : '导出 PDF'}</Button>
+                <Button type="button" size="sm" disabled={isExcelExporting} onClick={() => void handleExcelExport()}>{isExcelExporting ? '正在生成…' : '导出 Excel'}</Button>
+              </div>
           </div>
           <div className="max-h-[calc(100vh-180px)] overflow-auto rounded-2xl bg-slate-200/70 p-3 lg:p-5 print:max-h-none print:overflow-visible print:bg-white print:p-0"><DocumentPreview draft={draft} /></div>
         </aside>

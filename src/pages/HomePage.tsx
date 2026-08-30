@@ -6,6 +6,7 @@ import { Button } from '../components/ui/button'
 import { Card } from '../components/ui/card'
 import { Reveal } from '../components/Reveal'
 import { PLANS, PRICING_SUMMARY } from '../features/membership/staticConfig'
+import { QuickStartDialog } from '../features/documents/QuickStartDialog'
 
 // 价格一律取自 staticConfig，页面不重复维护一份，避免各处口径打架。
 const homePlans = PLANS.map((plan) => ({ ...plan, highlight: plan.id === 'yearly' }))
@@ -111,6 +112,7 @@ function SectionHeading({ eyebrow, title, desc }: { eyebrow: string; title: stri
 }
 
 export function HomePage() {
+  const [quickStartOpen, setQuickStartOpen] = useState(false)
   return (
     <main>
       {/* ───────── 1. Hero ───────── */}
@@ -121,7 +123,7 @@ export function HomePage() {
             <h1 className="mt-6 text-4xl font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-5xl">报价不亏、单据不错、客户不漏跟</h1>
             <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">Kyrie的外贸盒子，把外贸业务里最重复的工作，变成打开即用的小工具。</p>
             <div className="mt-9 flex flex-wrap gap-3">
-              <Button asChild size="lg"><Link to="/documents">免费开始使用<ArrowRight className="h-4 w-4" /></Link></Button>
+              <Button size="lg" onClick={() => setQuickStartOpen(true)}>免费开始使用<ArrowRight className="h-4 w-4" /></Button>
               <Button asChild size="lg" variant="outline"><a href="#pain">看看能解决什么问题</a></Button>
             </div>
             <div className="mt-8 grid gap-2 text-sm text-slate-500">
@@ -234,7 +236,7 @@ export function HomePage() {
             <div className="max-w-2xl">
               <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-sm font-semibold text-emerald-200"><TrendingUp className="h-4 w-4" aria-hidden="true" />为中小企业私人定制</span>
               <h2 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">帮你的团队，定制一套专属工具工作台</h2>
-              <p className="mt-4 text-lg leading-8 text-white/75">报价、制单、跟单、汇率换算自动化，一个人顶两个人。不卖大系统，只解决你最头疼的那一个环节——小步快跑，交付即用。</p>
+              <p className="mt-4 text-lg leading-8 text-white/75">报价、制单、跟单、汇率换算自动化，减少重复录入和手工核对，让团队把时间留给客户和成交。不卖大系统，只解决你最头疼的那一个环节——小步快跑，交付即用。</p>
             </div>
           </Reveal>
           <div className="mt-9 flex flex-wrap gap-3">
@@ -254,6 +256,8 @@ export function HomePage() {
           </div>
         </div>
       </section>
+
+      <QuickStartDialog open={quickStartOpen} onClose={() => setQuickStartOpen(false)} />
     </main>
   )
 }

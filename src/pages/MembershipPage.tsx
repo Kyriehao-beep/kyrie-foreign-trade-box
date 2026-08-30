@@ -1,4 +1,4 @@
-import { Check, Crown, Shield, UserCog, WalletCards } from 'lucide-react'
+import { Check, Crown, WalletCards } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Badge } from '../components/ui/badge'
@@ -20,6 +20,15 @@ export function MembershipPage() {
   const [plans, setPlans] = useState(fallbackPlans)
   useEffect(() => { void getPlans().then(setPlans).catch(() => undefined) }, [getPlans])
 
+  // 仅展示当前设备状态，不暗示存在线上账号（当前未实现真实鉴权）。
+  const deviceStatusLabel = (() => {
+    const phase = snapshot.entitlement.phase
+    if (phase === 'trialing') return '当前设备：试用中'
+    if (phase === 'expired') return '当前设备：试用已到期'
+    if (phase === 'anonymous') return '当前设备：尚未开始试用'
+    return `当前设备：${phaseLabels[phase] ?? '未知'}`
+  })()
+
   return (
     <main className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
       <section className="mx-auto max-w-3xl text-center">
@@ -31,7 +40,7 @@ export function MembershipPage() {
         <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-slate-500">
           {PRICING_SUMMARY.lifetimeScope}；{PRICING_SUMMARY.lifetimeExcludes}。未来的 AI 与云服务上线后按各自方式单独提供。
         </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2"><Badge className="bg-white text-slate-700">当前状态：{phaseLabels[snapshot.entitlement.phase] ?? '未知'}</Badge>{snapshot.user ? <Badge className="bg-white text-slate-700">账号：{snapshot.user.username}</Badge> : null}</div>
+        <div className="mt-6 flex flex-wrap justify-center gap-2"><Badge className="bg-white text-slate-700">{deviceStatusLabel}</Badge></div>
       </section>
 
       <section className="mt-12 grid gap-5 lg:grid-cols-3">
@@ -49,8 +58,7 @@ export function MembershipPage() {
         </Card>)}
       </section>
 
-      <section className="mt-14 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
-        <Card><CardHeader><div className="flex items-center gap-3"><UserCog className="h-6 w-6 text-brand-600" /><div><h2 className="text-xl font-semibold">管理员席位</h2><p className="text-sm text-slate-500">系统仅预留三个邀请制管理员，不计入普通用户订阅</p></div></div></CardHeader><CardContent className="grid gap-3 sm:grid-cols-3">{['一', '二', '三'].map((seat) => <div key={seat} className="rounded-xl border border-slate-200 bg-slate-50 p-4"><Shield className="h-5 w-5 text-brand-600" /><p className="mt-3 font-semibold">管理员席位{seat}</p><p className="mt-1 text-xs text-slate-500">通过服务器环境变量邀请</p></div>)}</CardContent></Card>
+      <section className="mt-14">
         <Card><CardHeader><div className="flex items-center gap-3"><Crown className="h-6 w-6 text-ocean" /><div><h2 className="text-xl font-semibold">本地买断版说明</h2><p className="text-sm text-slate-500">{PRICING_SUMMARY.lifetimeScope}</p></div></div></CardHeader><CardContent><p className="text-sm leading-6 text-slate-600">买断版一次付费 {PRICING_SUMMARY.lifetime}，可以一直使用<strong>购买时已经上线的本地功能</strong>，不受订阅到期影响。需要说清楚的是：{PRICING_SUMMARY.lifetimeExcludes}——这几项会按各自的方式单独提供，不承诺"以后所有新东西都免费"。不搞增值包，也不自动扣费。</p></CardContent></Card>
       </section>
     </main>

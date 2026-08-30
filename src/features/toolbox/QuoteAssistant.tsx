@@ -18,6 +18,7 @@ import { Card } from '../../components/ui/card'
 import { Input } from '../../components/ui/input'
 import { Badge } from '../../components/ui/badge'
 import { loadRates } from '../../services/rates'
+import { CustomServiceNudge } from '../marketing/CustomServiceNudge'
 import {
   DEFAULT_QUOTE_INPUT,
   belowBreakEvenAdvice,
@@ -753,6 +754,8 @@ export function QuoteAssistant() {
                 PI 已生成为 HTML 文件，浏览器打开后可打印为 PDF 或直接发给客户。发送前请替换买卖方占位信息。
               </p>
             ) : null}
+
+            <CustomServiceNudge />
           </section>
         ) : null}
 

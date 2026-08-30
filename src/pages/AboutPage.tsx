@@ -154,7 +154,7 @@ export default function AboutPage() {
               </div>
               <div className="p-4">
                 <p className="text-xs font-medium text-brand-600">改造后</p>
-                <p className="mt-2 text-sm leading-6 text-ink">打开专属工具，填一次资料，单据、报价、跟进自动跑</p>
+                <p className="mt-2 text-sm leading-6 text-ink">一套资料可以持续复用到报价、单据和跟进流程</p>
               </div>
             </div>
           </Card>

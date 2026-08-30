@@ -31,6 +31,7 @@ it('presents the approved paid plans without demo activation controls', () => {
   expect(screen.getAllByText(PRICING_SUMMARY.lifetimeScope, { exact: false }).length).toBeGreaterThan(0)
   expect(screen.getAllByText(PRICING_SUMMARY.lifetimeExcludes, { exact: false }).length).toBeGreaterThan(0)
   expect(screen.getAllByText(PRICING_SUMMARY.noAutoCharge, { exact: false }).length).toBeGreaterThan(0)
-  expect(screen.getAllByText(/^管理员席位[一二三]$/)).toHaveLength(3)
+  expect(screen.queryByText(/管理员席位/)).not.toBeInTheDocument()
+  expect(screen.queryByText(/账号：/)).not.toBeInTheDocument()
   expect(screen.queryByText('演示激活此方案')).not.toBeInTheDocument()
 })
