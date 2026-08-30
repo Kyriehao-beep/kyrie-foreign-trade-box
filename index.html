@@ -3,6 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // 在首屏绘制前同步主题，避免暗色模式闪烁（FOUC）。
+      (function () {
+        try {
+          var k = 'ktb_theme';
+          var s = localStorage.getItem(k);
+          var dark = s ? s === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          document.documentElement.classList.toggle('dark', dark);
+        } catch (e) {}
+      })();
+    </script>
     <meta name="description" content="面向中国外贸人的本地化单据与效率工具" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="zh_CN" />
@@ -18,8 +29,8 @@
     <meta name="twitter:description" content="从询盘到单据，少填一遍，少错一处。" />
     <meta name="twitter:image" content="/kyrie-foreign-trade-box/og.png" />
     <title>Kyrie的外贸盒子</title>
-    <script type="module" crossorigin src="/kyrie-foreign-trade-box/assets/index-Cdv_7Li3.js"></script>
-    <link rel="stylesheet" crossorigin href="/kyrie-foreign-trade-box/assets/index-BxIkCWy3.css">
+    <script type="module" crossorigin src="/kyrie-foreign-trade-box/assets/index-DvE-pb7Q.js"></script>
+    <link rel="stylesheet" crossorigin href="/kyrie-foreign-trade-box/assets/index-Drce6k-O.css">
   </head>
   <body>
     <div id="root"></div>
