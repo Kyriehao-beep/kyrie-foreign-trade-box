@@ -7,6 +7,7 @@ import { Card } from '../components/ui/card'
 import { Reveal } from '../components/Reveal'
 import { PLANS, PRICING_SUMMARY } from '../features/membership/staticConfig'
 import { QuickStartDialog } from '../features/documents/QuickStartDialog'
+import { ToolShortcuts } from '../features/toolbox/ToolShortcuts'
 
 // 价格一律取自 staticConfig，页面不重复维护一份，避免各处口径打架。
 const homePlans = PLANS.map((plan) => ({ ...plan, highlight: plan.id === 'yearly' }))
@@ -190,6 +191,13 @@ export function HomePage() {
               )
             })}
           </div>
+        </div>
+      </section>
+
+      {/* ───────── 3.5 常用入口（工具箱快捷） ───────── */}
+      <section className="bg-paper">
+        <div className="mx-auto max-w-shell px-5 lg:px-8">
+          <ToolShortcuts />
         </div>
       </section>
 
