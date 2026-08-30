@@ -13,6 +13,7 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Button } from '../../components/ui/button'
 import { Card } from '../../components/ui/card'
 import { Input } from '../../components/ui/input'
@@ -314,6 +315,18 @@ export function QuoteAssistant() {
 
   const set = <K extends keyof QuoteInput>(key: K) => (value: QuoteInput[K]) =>
     setInput((prev) => ({ ...prev, [key]: value }))
+
+  // 入向联动：装箱 CBM 计算器「带入报价助手」通过 ?freight=<平均运费/件(元)> 跳转，
+  // 自动填入单件国际运费并切到 CIF（海运/空运/快递的运费均计入 CIF）。
+  const [searchParams] = useSearchParams()
+  useEffect(() => {
+    const freight = searchParams.get('freight')
+    if (freight == null || freight === '') return
+    const f = Number(freight)
+    if (Number.isFinite(f) && f > 0) {
+      setInput((prev) => ({ ...prev, unitIntlFreight: f, mode: 'CIF' }))
+    }
+  }, [searchParams])
 
   const result = useMemo(() => computeQuote(input), [input])
   const copyData = useMemo(() => generateSalesCopy(input, result), [input, result])

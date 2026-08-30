@@ -1,6 +1,6 @@
 // 手机端工作台底部导航：首页 / 单据 / 跟单 / 工具 / 更多。
 // 桌面端由侧栏承载，这里仅在 <lg 显示。
-import { Home, FileText, Users, Calculator, MoreHorizontal, ArrowLeftRight, Globe2, Crown, MessageSquare, UserCircle, ShieldCheck } from 'lucide-react'
+import { Home, FileText, Users, Calculator, MoreHorizontal, ArrowLeftRight, Globe2, Crown, MessageSquare, UserCircle, ShieldCheck, Boxes } from 'lucide-react'
 import { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { useMembership } from '../features/membership/MembershipContext'
@@ -17,6 +17,7 @@ const PRIMARY = [
 const MORE_ITEMS = [
   { to: '/exchange', label: '汇率换算', icon: ArrowLeftRight },
   { to: '/world', label: '世界时间', icon: Globe2 },
+  { to: '/carton-cbm', label: '装箱 CBM 计算器', icon: Boxes },
   { to: '/membership', label: '会员中心', icon: Crown },
   { to: '/contact', label: '联系站长', icon: MessageSquare },
   { to: '/about', label: '关于 & 定制', icon: UserCircle },

@@ -2,7 +2,7 @@
 // 「跟单助手」作为直达项放在「业务」分组。
 import { useEffect, type ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
-import { ArrowLeftRight, Box, Calculator, Crown, FileText, Globe2, Home, Menu, MessageSquare, PanelLeftClose, PanelLeftOpen, ShieldCheck, UserCircle, Users, X } from 'lucide-react'
+import { ArrowLeftRight, Box, Boxes, Calculator, Crown, FileText, Globe2, Home, Menu, MessageSquare, PanelLeftClose, PanelLeftOpen, ShieldCheck, UserCircle, Users, X } from 'lucide-react'
 import { useMembership } from '../features/membership/MembershipContext'
 import { adminApi } from '../features/membership/adminApi'
 import { PRICING_SUMMARY } from '../features/membership/staticConfig'
@@ -31,6 +31,7 @@ const GROUPS: { label: string; items: NavItem[] }[] = [
       { to: '/quote', label: '报价助手', icon: Calculator },
       { to: '/exchange', label: '汇率换算', icon: ArrowLeftRight },
       { to: '/world', label: '世界时间', icon: Globe2 },
+      { to: '/carton-cbm', label: '装箱 CBM 计算器', icon: Boxes },
     ],
   },
   { label: '账户', items: [{ to: '/membership', label: '会员中心', icon: Crown }, { to: '/contact', label: '联系站长', icon: MessageSquare }, { to: '/about', label: '关于 & 定制', icon: UserCircle }] },

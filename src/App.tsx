@@ -16,6 +16,7 @@ import { MembershipPage } from './pages/MembershipPage'
 import { QuotePage } from './pages/QuotePage'
 import { ExchangePage } from './pages/ExchangePage'
 import { WorldTimePage } from './pages/WorldTimePage'
+import { CartonCbmPage } from './pages/CartonCbmPage'
 import ContactPage from './pages/ContactPage'
 import AboutPage from './pages/AboutPage'
 import { UnlockPage } from './pages/UnlockPage'
@@ -94,6 +95,7 @@ export function App() {
           <Route path="/quote" element={<ProtectedFeature><QuotePage /></ProtectedFeature>} />
           <Route path="/exchange" element={<ProtectedFeature><ExchangePage /></ProtectedFeature>} />
           <Route path="/world" element={<ProtectedFeature><WorldTimePage /></ProtectedFeature>} />
+          <Route path="/carton-cbm" element={<ProtectedFeature><CartonCbmPage /></ProtectedFeature>} />
           <Route path="/admin" element={<AdminPage />} />
         </Route>
 
