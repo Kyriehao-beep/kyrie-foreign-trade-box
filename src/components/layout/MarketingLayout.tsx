@@ -5,6 +5,7 @@ import { useState, type ReactNode } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { Button } from '../ui/button'
 import { MobileMenuButton } from '../Sidebar'
+import { ThemeToggle } from '../../features/theme/ThemeToggle'
 
 const LINKS = [
   { to: '/', label: '首页', end: true },
@@ -30,6 +31,7 @@ export function MarketingLayout({ children }: { children: ReactNode }) {
               </span>
               <span className="font-semibold">Kyrie的外贸盒子</span>
             </Link>
+            <ThemeToggle />
           </div>
           <nav className="hidden items-center gap-1 md:flex" aria-label="顶部导航">
             {LINKS.map((link) => (
@@ -69,6 +71,7 @@ export function MarketingLayout({ children }: { children: ReactNode }) {
               <button type="button" onClick={() => setOpen(false)} aria-label="关闭导航菜单" className="rounded-lg p-2 text-slate-500 transition-colors duration-fast hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
                 <X className="h-5 w-5" />
               </button>
+              <ThemeToggle />
             </div>
             <nav className="flex-1 space-y-1 px-3 py-4" aria-label="导航菜单">
               {LINKS.map((link) => (

@@ -7,6 +7,7 @@ import { useMembership } from '../features/membership/MembershipContext'
 import { adminApi } from '../features/membership/adminApi'
 import { PRICING_SUMMARY } from '../features/membership/staticConfig'
 import { getAdminToken, isBackendEnabled } from '../services/apiClient'
+import { ThemeToggle } from '../features/theme/ThemeToggle'
 
 interface NavItem {
   to: string
@@ -142,18 +143,24 @@ export function Sidebar({ open, onClose, collapsed, onToggleCollapse }: { open: 
       </div>
       <div className="border-t border-slate-100 px-4 py-3">
         {collapsed ? (
-          <button
-            type="button"
-            onClick={onToggleCollapse}
-            aria-label="展开侧栏"
-            className="mx-auto block rounded-lg p-1.5 text-slate-400 transition-colors duration-fast hover:bg-slate-100 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-          >
-            <PanelLeftOpen className="h-5 w-5" aria-hidden="true" />
-          </button>
+          <div className="flex flex-col items-center gap-2">
+            <button
+              type="button"
+              onClick={onToggleCollapse}
+              aria-label="展开侧栏"
+              className="rounded-lg p-1.5 text-slate-400 transition-colors duration-fast hover:bg-slate-100 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+            >
+              <PanelLeftOpen className="h-5 w-5" aria-hidden="true" />
+            </button>
+            <ThemeToggle />
+          </div>
         ) : (
-          <p className="text-[11px] leading-relaxed text-slate-400">
-            数据默认保存在本机浏览器<br />{PRICING_SUMMARY.trial}，定制需求加微信聊
-          </p>
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-[11px] leading-relaxed text-slate-400">
+              数据默认保存在本机浏览器<br />{PRICING_SUMMARY.trial}，定制需求加微信聊
+            </p>
+            <ThemeToggle />
+          </div>
         )}
       </div>
     </aside>
@@ -171,6 +178,9 @@ export function Sidebar({ open, onClose, collapsed, onToggleCollapse }: { open: 
         </div>
         <div className="flex-1 overflow-y-auto px-3 py-4">
           <NavContent onNavigate={onClose} />
+        </div>
+        <div className="border-t border-slate-100 px-3 py-3">
+          <ThemeToggle className="w-full" />
         </div>
       </aside>
     </div>

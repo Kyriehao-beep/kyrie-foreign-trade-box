@@ -3,6 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // 在首屏绘制前同步主题，避免暗色模式闪烁（FOUC）。
+      (function () {
+        try {
+          var k = 'ktb_theme';
+          var s = localStorage.getItem(k);
+          var dark = s ? s === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          document.documentElement.classList.toggle('dark', dark);
+        } catch (e) {}
+      })();
+    </script>
     <meta name="description" content="面向中国外贸人的本地化单据与效率工具" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="zh_CN" />

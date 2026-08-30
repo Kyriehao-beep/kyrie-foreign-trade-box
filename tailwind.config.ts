@@ -5,6 +5,7 @@ import type { Config } from 'tailwindcss'
  * 视觉方向：专业、克制、可信 —— 深青绿主色 + 暖灰白底，避免玻璃/荧光/大面积渐变。
  */
 export default {
+  darkMode: 'class',
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {

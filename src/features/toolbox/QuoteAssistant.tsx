@@ -349,7 +349,7 @@ export function QuoteAssistant() {
   return (
     <Card id="quote-assistant" className="overflow-hidden p-0">
       {/* header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-brand-50 to-white px-5 py-4 sm:px-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-brand-50 to-white dark:from-[#0f3a31] dark:to-[#15231f] px-5 py-4 sm:px-6">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600 text-white">
             <Calculator className="h-5 w-5" />

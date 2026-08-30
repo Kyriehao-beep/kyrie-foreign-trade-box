@@ -1,0 +1,63 @@
+/* 自动生成：暗色模式覆盖层（由 scripts/gen-dark-css.mjs 生成，勿手改）
+   机制：.dark 作用域下用更高优先级选择器覆盖 Tailwind 的中性/品牌色工具类，
+   避免逐个组件改 270+ 处硬编码颜色。改色板请改生成脚本后重跑。
+   共 56 条覆盖规则。 */
+html.dark { background-color: #0c1614; color: #e9f1ee; }
+html.dark body { background-color: #0c1614; }
+
+.dark .bg-amber-50 { background-color: rgb(58, 46, 12); }
+.dark .bg-brand-50 { background-color: rgb(15, 58, 49); }
+.dark .bg-brand-50\/60 { background-color: rgba(15, 58, 49, 0.6); }
+.dark .bg-brand-50\/70 { background-color: rgba(15, 58, 49, 0.7); }
+.dark .bg-paper { background-color: #0c1614; }
+.dark .bg-slate-100 { background-color: rgb(29, 45, 41); }
+.dark .bg-slate-200 { background-color: rgb(37, 56, 50); }
+.dark .bg-slate-200\/70 { background-color: rgba(37, 56, 50, 0.7); }
+.dark .bg-slate-50 { background-color: rgb(24, 39, 31); }
+.dark .bg-slate-50\/40 { background-color: rgba(24, 39, 31, 0.4); }
+.dark .bg-slate-50\/50 { background-color: rgba(24, 39, 31, 0.5); }
+.dark .bg-slate-50\/60 { background-color: rgba(24, 39, 31, 0.6); }
+.dark .bg-slate-900 { background-color: rgb(7, 15, 14); }
+.dark .bg-slate-900\/40 { background-color: rgba(7, 15, 14, 0.4); }
+.dark .bg-slate-900\/50 { background-color: rgba(7, 15, 14, 0.5); }
+.dark .bg-white { background-color: rgb(21, 35, 31); }
+.dark .bg-white\/90 { background-color: rgba(21, 35, 31, 0.9); }
+.dark .bg-white\/95 { background-color: rgba(21, 35, 31, 0.95); }
+.dark .border-amber-500 { border-color: #6b5310; }
+.dark .border-brand-100 { border-color: #1c5a4d; }
+.dark .border-line { border-color: #243531; }
+.dark .border-line\/70 { border-color: #243531; }
+.dark .border-slate-100 { border-color: rgb(35, 52, 47); }
+.dark .border-slate-200 { border-color: rgb(44, 62, 57); }
+.dark .border-slate-200\/80 { border-color: rgba(44, 62, 57, 0.8); }
+.dark .border-slate-300 { border-color: rgb(54, 74, 68); }
+.dark .border-slate-900 { border-color: rgb(44, 62, 57); }
+.dark .divide-line { border-color: #243531; }
+.dark .from-brand-50 { background-color: rgb(15, 58, 49); }
+.dark .group-hover\:text-brand-500 { color: #84d3bd; }
+.dark .group-hover\:text-brand-700 { color: #7fe0c4; }
+.dark .hover\:bg-amber-50\/60 { background-color: rgba(58, 46, 12, 0.6); }
+.dark .hover\:bg-brand-50 { background-color: rgb(15, 58, 49); }
+.dark .hover\:bg-brand-50\/50 { background-color: rgba(15, 58, 49, 0.5); }
+.dark .hover\:bg-slate-100 { background-color: rgb(29, 45, 41); }
+.dark .hover\:bg-slate-50 { background-color: rgb(24, 39, 31); }
+.dark .hover\:text-amber-700 { color: #f4d58a; }
+.dark .hover\:text-brand-500 { color: #84d3bd; }
+.dark .hover\:text-brand-700 { color: #7fe0c4; }
+.dark .hover\:text-ink { color: #e9f1ee; }
+.dark .hover\:text-slate-600 { color: rgb(174, 189, 184); }
+.dark .hover\:text-slate-700 { color: rgb(198, 210, 205); }
+.dark .placeholder\:text-slate-400::placeholder { color: rgb(139, 154, 149); }
+.dark .text-amber-700 { color: #f4d58a; }
+.dark .text-brand-500 { color: #84d3bd; }
+.dark .text-brand-600 { color: #84d3bd; }
+.dark .text-brand-700 { color: #7fe0c4; }
+.dark .text-ink { color: #e9f1ee; }
+.dark .text-ocean { color: #5aa9d6; }
+.dark .text-slate-300 { color: rgb(159, 176, 171); }
+.dark .text-slate-400 { color: rgb(139, 154, 149); }
+.dark .text-slate-500 { color: rgb(142, 158, 152); }
+.dark .text-slate-600 { color: rgb(174, 189, 184); }
+.dark .text-slate-700 { color: rgb(198, 210, 205); }
+.dark .text-slate-900 { color: rgb(233, 241, 238); }
+.dark .to-white { background-color: rgb(21, 35, 31); }
