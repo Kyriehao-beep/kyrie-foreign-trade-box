@@ -6,6 +6,7 @@ import { Button } from '../components/ui/button'
 import { Card } from '../components/ui/card'
 import { Reveal } from '../components/Reveal'
 import { WECHAT_QR_BASE64 } from '../assets/qrCodes'
+import { CustomerSourcingSection } from '../features/marketing/CustomerSourcingSection'
 
 // 微信联系信息（真实数据，与联系页保持一致）。
 const WECHAT = { name: 'Kyrie', note: '（**阳）· 中国香港' }
@@ -52,7 +53,7 @@ const PROCESS = [
 ]
 
 /* ── 微信二维码弹窗（仅在点击咨询后显示，减少首屏干扰）──────────── */
-function WeChatModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+function WeChatModal({ open, onClose, note }: { open: boolean; onClose: () => void; note?: string }) {
   const closeRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
@@ -102,7 +103,9 @@ function WeChatModal({ open, onClose }: { open: boolean; onClose: () => void }) 
         </div>
 
         <p className="mt-3 text-center text-sm font-medium text-ink">微信：{WECHAT.name} {WECHAT.note}</p>
-        <p className="mt-1 text-center text-xs text-slate-500">加好友备注「公司 + 想做的工具」，我优先通过</p>
+        <p className="mt-1 text-center text-xs text-slate-500">
+          {note ?? '加好友备注「公司 + 想做的工具」，我优先通过'}
+        </p>
       </div>
     </div>
   )
@@ -110,6 +113,20 @@ function WeChatModal({ open, onClose }: { open: boolean; onClose: () => void }) 
 
 export default function AboutPage() {
   const [wechatOpen, setWechatOpen] = useState(false)
+  const [wechatNote, setWechatNote] = useState<string | undefined>(undefined)
+  const servicesRef = useRef<HTMLElement>(null)
+
+  const openWechat = (note?: string) => {
+    setWechatNote(note)
+    setWechatOpen(true)
+  }
+
+  const scrollToServices = () => {
+    const el = servicesRef.current
+    if (!el) return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+  }
 
   return (
     <main>
@@ -128,7 +145,7 @@ export default function AboutPage() {
             </p>
 
             <div className="mt-6 flex flex-wrap items-center gap-3">
-              <Button size="lg" onClick={() => setWechatOpen(true)}>
+              <Button size="lg" type="button" onClick={() => openWechat()}>
                 <MessageCircle className="h-4 w-4" />
                 免费梳理一次流程
               </Button>
@@ -189,7 +206,7 @@ export default function AboutPage() {
       </section>
 
       {/* ───────── 3. 三类服务 ───────── */}
-      <section className="border-y border-line/70 bg-slate-50/50 py-9 lg:py-12">
+      <section id="services" ref={servicesRef} scroll-mt-24 className="border-y border-line/70 bg-slate-50/50 py-9 lg:py-12">
         <div className="mx-auto max-w-shell px-5 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-sm font-semibold text-brand-600">按要解决的具体问题报价</p>
@@ -227,6 +244,9 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+
+      {/* ───────── 3.5 客户开发与供应商寻源（定制服务推广）───────── */}
+      <CustomerSourcingSection onOpenWeChat={openWechat} onScrollToServices={scrollToServices} />
 
       {/* ───────── 4. 合作过程 ───────── */}
       <section className="py-9 lg:py-12">
@@ -266,7 +286,8 @@ export default function AboutPage() {
               <Button
                 size="lg"
                 variant="secondary"
-                onClick={() => setWechatOpen(true)}
+                type="button"
+                onClick={() => openWechat()}
               >
                 <MessageCircle className="h-4 w-4" />
                 微信发送我的问题
@@ -276,7 +297,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <WeChatModal open={wechatOpen} onClose={() => setWechatOpen(false)} />
+      <WeChatModal open={wechatOpen} onClose={() => setWechatOpen(false)} note={wechatNote} />
     </main>
   )
 }
